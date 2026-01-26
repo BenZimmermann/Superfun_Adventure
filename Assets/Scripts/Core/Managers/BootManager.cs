@@ -4,6 +4,16 @@ using UnityEngine.SceneManagement;
 public class BootManager : MonoBehaviour
 {
     [SerializeField] private string startSceneName = "MainMenu";
+
+    [SerializeField] private GameObject gameManagerPrefab;
+    [SerializeField] private GameObject gameStateManagerPrefab;
+    [SerializeField] private GameObject levelManagerPrefab;
+    [SerializeField] private GameObject inputManagerPrefab;
+    [SerializeField] private GameObject uiManagerPrefab;
+    [SerializeField] private GameObject audioManagerPrefab;
+    [SerializeField] private GameObject settingsManagerPrefab;
+    [SerializeField] private GameObject saveManagerPrefab;
+
     private static bool hasBooted;
 
     private void Awake()
@@ -23,75 +33,23 @@ public class BootManager : MonoBehaviour
     /// <summary>
     /// Initializes all necessary managers for the game, in a sepeate scene to avoid circular dependencies.
     /// </summary>
+
     private void InitializeManagers()
     {
-        CreateGameManager();
-        CreateGameStateManager();
-        CreateLevelManager();
-        CreateInputManager();
-        CreateUIManager();
-        CreateAudioManager();
-        CreateSettingsManager();
-        CreateSaveManager();
-        //CreateCorruptionManager();
+        CreateManager<GameManager>(gameManagerPrefab);
+        CreateManager<GameStateManager>(gameStateManagerPrefab);
+        CreateManager<LevelManager>(levelManagerPrefab);
+        CreateManager<InputManager>(inputManagerPrefab);
+        CreateManager<UIManager>(uiManagerPrefab);
+        CreateManager<AudioManager>(audioManagerPrefab);
+        CreateManager<SettingsManager>(settingsManagerPrefab);
+        CreateManager<SaveManager>(saveManagerPrefab);
     }
 
-    private void CreateGameManager()
+    private void CreateManager<T>(GameObject prefab) where T : MonoBehaviour
     {
-        if (GameManager.Instance != null) return;
-        Debug.Log("Creating GameManager");
-        new GameObject("GameManager").AddComponent<GameManager>();
-    }
+        if (FindAnyObjectByType<T>() != null) return;
 
-    private void CreateGameStateManager()
-    {
-        if (GameStateManager.Instance != null) return;
-        Debug.Log("Creating GameStateManager");
-        new GameObject("GameStateManager").AddComponent<GameStateManager>();
+        Instantiate(prefab);
     }
-    private void CreateLevelManager()
-    {
-        if (LevelManager.Instance != null) return;
-        Debug.Log("Creating LevelManager");
-        new GameObject("LevelManager").AddComponent<LevelManager>();
-    }
-    private void CreateInputManager()
-    {
-        if (InputManager.Instance != null) return;
-        Debug.Log("Creating InputManager");
-        new GameObject("InputManager").AddComponent<InputManager>();
-    }
-
-    private void CreateUIManager()
-    {
-        if (UIManager.Instance != null) return;
-        Debug.Log("Creating UIManager");
-        new GameObject("UIManager").AddComponent<UIManager>();
-    }
-
-    private void CreateAudioManager()
-    {
-        if (AudioManager.Instance != null) return;
-        new GameObject("AudioManager").AddComponent<AudioManager>();
-    }
-
-    private void CreateSettingsManager()
-    {
-        if (SettingsManager.Instance != null) return;
-        Debug.Log("Creating SettingsManager");
-        new GameObject("SettingsManager").AddComponent<SettingsManager>();
-    }
-
-    private void CreateSaveManager()
-    {
-        if (SaveManager.Instance != null) return;
-        Debug.Log("Creating SaveManager");
-        new GameObject("SaveManager").AddComponent<SaveManager>();
-    }
-
-    //private void CreateCorruptionManager()
-    //{
-    //    if (CorruptionManager.Instance != null) return;
-    //    new GameObject("CorruptionManager").AddComponent<CorruptionManager>();
-    //}
 }
