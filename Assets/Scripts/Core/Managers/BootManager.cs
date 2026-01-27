@@ -44,6 +44,8 @@ public class BootManager : MonoBehaviour
         CreateManager<AudioManager>(audioManagerPrefab);
         CreateManager<SettingsManager>(settingsManagerPrefab);
         CreateManager<SaveManager>(saveManagerPrefab);
+
+        GameStateManager.Instance.SetState(GameState.MainMenu);
     }
 
     private void CreateManager<T>(GameObject prefab) where T : MonoBehaviour
@@ -51,5 +53,6 @@ public class BootManager : MonoBehaviour
         if (FindAnyObjectByType<T>() != null) return;
 
         Instantiate(prefab);
+
     }
 }

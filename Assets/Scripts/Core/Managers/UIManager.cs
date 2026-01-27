@@ -97,9 +97,20 @@ public class UIManager : MonoBehaviour
                 return;
             }
         if (menus[menuName] != null)
-            { 
-                menus[menuName].SetActive(true);
+            {
+            GameObject menuPrefab = menus[menuName];
+
+            if (menuPrefab != null)
+            {
+                GameObject menuInstance = Instantiate(menuPrefab, transform);
                 Debug.Log($"Opening Menu: {menuName}");
+            }
+            else
+            {
+                Debug.LogError($"Menu Prefab '{menuName}' nicht gefunden!");
+            }
+            //menus[menuName].SetActive(true);
+            Debug.Log($"Opening Menu: {menuName}");
             }
     }
     public void CloseCurrentMenu(string menuName)

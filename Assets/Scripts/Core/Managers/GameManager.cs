@@ -76,8 +76,4 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
-    public void RestartFromLastSave()
-    {
-        ContinueGame();
-    }
 }  

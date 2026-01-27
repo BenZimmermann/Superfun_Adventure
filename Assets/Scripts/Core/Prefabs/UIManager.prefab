@@ -44,3 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8df16152e5dde5244a2b4d714ba9535e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenuUI: {fileID: 0}
+  pauseMenuUI: {fileID: 0}
+  bossHealthUI: {fileID: 0}
+  deathUI: {fileID: 0}
+  hudUI: {fileID: 0}
+  settingsUI: {fileID: 0}
+  corupptedUI: {fileID: 0}

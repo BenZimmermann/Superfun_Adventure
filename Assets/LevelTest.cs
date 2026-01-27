@@ -9,17 +9,20 @@ public class LevelTest : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
+        {
             LevelManager.Instance.LoadLevel(0);
-        GameStateManager.Instance.SetState(GameState.Playing);
-
+            GameStateManager.Instance.SetState(GameState.Playing);
+    }
         if (Input.GetKeyDown(KeyCode.W))
+        { 
             LevelManager.Instance.LoadLevel(1);
-        GameStateManager.Instance.SetState(GameState.Playing);
-
+            GameStateManager.Instance.SetState(GameState.Playing);
+    }
         if (Input.GetKeyDown(KeyCode.E))
+        { 
             LevelManager.Instance.LoadLevel(2);
-        GameStateManager.Instance.SetState(GameState.Playing);
-
+            GameStateManager.Instance.SetState(GameState.Playing);
+        }
         if (Input.GetKeyDown(KeyCode.R))
             LevelManager.Instance.ReloadCurrentLevel();
 
