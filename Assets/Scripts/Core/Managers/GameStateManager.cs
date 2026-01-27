@@ -52,5 +52,6 @@ public enum GameState
         Paused,
         BossFight,
         GameOver,
-        Corrupted
+        Corrupted,
+        Settings
     }

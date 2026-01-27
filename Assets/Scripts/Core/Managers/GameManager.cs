@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
         currentLevel = currentSaveData.currentLevel;
 
         GameStateManager.Instance.SetState(GameState.Playing);
-        //LevelManager.Instance.LoadLevel(currentLevel);
+        LevelManager.Instance.LoadLevel(currentLevel);
     }
     public void ContinueGame()
     {
@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
         currentLevel = currentSaveData.currentLevel;
         Debug.Log($"Game loaded, Level: {currentSaveData.level}");
         GameStateManager.Instance.SetState(GameState.Playing);
-        //LevelManager.Instance.LoadLevel(currentLevel);
+        LevelManager.Instance.LoadLevel(currentLevel);
     }
     public void QuitGame()
     {
