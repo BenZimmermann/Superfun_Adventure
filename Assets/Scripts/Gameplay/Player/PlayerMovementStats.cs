@@ -24,7 +24,7 @@ public class PlayerMovementStats : ScriptableObject
     public float JumpHeight = 6.5f;
     [Range(1f, 1.1f)] public float JumpHeightCompensationFactor = 1.054f;
     public float TimeTillJumpApex = 0.35f;
-    [Range(0.01f, 5f)] public float GravityOnRelaseMultiplier = 2f;
+    [Range(0.01f, 5f)] public float GravityOnReleaseMultiplier = 2f;
     public float MaxFallSpeed = 26f;
     [Range(1, 5)] public int NumberOfJumpsAllowed = 1;
 
@@ -39,18 +39,22 @@ public class PlayerMovementStats : ScriptableObject
     [Range(0f, 1f)] public float JumpBufferTime = 0.125f;
 
     [Header("Jump Coyote Timer")]
-    [Range(0f, 1f)] public float JumpCoyoteTimer = 0.1f;
+    [Range(0f, 1f)] public float JumpCoyoteTime = 0.1f;
+
+    [Header("Debug")]
+    public bool DebugShowIsGroundedBox;
+    public bool DebugShowHeadBumpBox;
 
     [Header("JumpVisualisation Tool")]
     public bool ShowWalkJumpArc = false;
     public bool ShownRunJumpArc = false;
     public bool StopOnCollison = true;
     public bool DrawRight = true;
-    [Range(5, 100)] public int ArcResolutiion = 20;
+    [Range(5, 100)] public int ArcResolution = 20;
     [Range(0, 100)] public int VisualizionSteps = 90;
 
     public float Gravity {  get; private set; }
-    public float InitialJumpVelocety { get; private set; }
+    public float InitialJumpVelocity { get; private set; }
     public float AdjustedJumpHeight { get; private set; }
 
     private void OnValidate()
@@ -63,8 +67,8 @@ public class PlayerMovementStats : ScriptableObject
     }
     private void CalculateValues()
     {
-        AdjustedJumpHeight = JumpHeightCompensationFactor;
+        AdjustedJumpHeight = JumpHeight * JumpHeightCompensationFactor;
         Gravity = -(2f * AdjustedJumpHeight)/ Mathf.Pow(TimeTillJumpApex, 2f);
-        InitialJumpVelocety = Mathf.Abs(Gravity) * TimeTillJumpApex;
+        InitialJumpVelocity = Mathf.Abs(Gravity) * TimeTillJumpApex;
     }
 }

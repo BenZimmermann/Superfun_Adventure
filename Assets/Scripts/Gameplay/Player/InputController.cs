@@ -25,7 +25,20 @@ public class InputController : MonoBehaviour
         _jumpAction = PlayerInput.actions["Jump"];
         _runAction = PlayerInput.actions["Run"];
     }
-
+    public void JumpAction(InputAction.CallbackContext context)
+    {
+        if (context.started || context.performed)
+        {
+            Debug.Log("Recognizing jump");
+            JumpWasPressed = true;
+            JumpWasReleased = false;
+        }
+        else if (context.canceled)
+        {
+            JumpWasPressed = false;
+            JumpWasReleased = true;
+        }
+    }
     private void Update()
     {
         Movement = _moveAction.ReadValue<Vector2>();
