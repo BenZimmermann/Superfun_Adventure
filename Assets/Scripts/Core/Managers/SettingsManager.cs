@@ -66,7 +66,7 @@ public class SettingsManager : MonoBehaviour
     }
     public void SetMasterVolume(float volume)
     {
-        currentSettings.masterVolume = Mathf.Clamp01(volume);
+        currentSettings.masterVolume = volume;
         AudioListener.volume = currentSettings.muteAll ? 0f : currentSettings.masterVolume;
         Debug.Log($"Master Volume set to: {currentSettings.masterVolume}");
     }
@@ -76,7 +76,7 @@ public class SettingsManager : MonoBehaviour
     }
     public void SetMusicVolume(float volume)
     {
-        currentSettings.musicVolume = Mathf.Clamp01(volume);
+        currentSettings.musicVolume = volume;
         Debug.Log($"Music Volume set to: {currentSettings.musicVolume}");
     }
     public float GetSfxVolume()
@@ -85,7 +85,7 @@ public class SettingsManager : MonoBehaviour
     }
     public void SetSfxVolume(float volume)
     {
-        currentSettings.sfxVolume = Mathf.Clamp01(volume);
+        currentSettings.sfxVolume = volume;
         Debug.Log($"SFX Volume set to: {currentSettings.sfxVolume}");
     }
     public bool GetMuteAll()
@@ -105,7 +105,7 @@ public class SettingsManager : MonoBehaviour
     }
     public void SetMouseSensitivity(float sensitivity)
     {
-        currentSettings.mouseSensitivity = Mathf.Clamp(sensitivity, 0.1f, 5f);
+        currentSettings.mouseSensitivity = sensitivity;
         Debug.Log($"Mouse Sensitivity set to: {currentSettings.mouseSensitivity}");
     }
     // ==== INPUT SETTINGS =====

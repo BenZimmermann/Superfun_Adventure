@@ -4,10 +4,11 @@ public class PauseHandler : MonoBehaviour
 {
     [SerializeField] private GameObject PauseCanvas;
     [SerializeField] private GameObject SettingsCanvas;
+    [SerializeField] private SettingsHandler settingsHandler;
     public void OnResumePressed()
     {
         //later MainMenu to Playing
-        GameStateManager.Instance.SetState(GameState.MainMenu);
+        GameStateManager.Instance.LastGameState();
         PauseCanvas.SetActive(false);
     }
     public void QuitPressed()
@@ -17,6 +18,7 @@ public class PauseHandler : MonoBehaviour
     }
     public void OnSettingsPressed()
     {
+        settingsHandler.UpdateUIOnLoad();
         GameStateManager.Instance.SetState(GameState.Settings);
         SettingsCanvas.SetActive(true);
     }

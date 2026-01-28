@@ -10,6 +10,7 @@ public class GameStateManager : MonoBehaviour
     /// </summary>
     public static GameStateManager Instance { get; private set; }
     public GameState CurrentState { get; private set; } = GameState.Boot;
+    private GameState previousState;
     public event Action<GameState, GameState> OnStateChanged;
     private void Awake()
     {
@@ -27,12 +28,18 @@ public class GameStateManager : MonoBehaviour
         if (CurrentState == newState)
             return;
 
-        GameState previousState = CurrentState;
+        //GameState previousState = CurrentState;
+        //CurrentState = newState;
+        previousState = CurrentState;
         CurrentState = newState;
 
         Debug.Log($"[GameStateManager] State changed: {previousState} -> {newState}");
 
         OnStateChanged?.Invoke(previousState, newState);
+    }
+    public void LastGameState()
+    {
+        SetState(previousState);
     }
     public GameState GetState()
     {
@@ -42,7 +49,7 @@ public class GameStateManager : MonoBehaviour
     {
         return CurrentState == state;
     }
-
+      
 }
 public enum GameState
     {

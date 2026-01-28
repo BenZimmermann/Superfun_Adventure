@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditorInternal.VersionControl.ListControl;
 public class SettingsHandler : MonoBehaviour
 {
     [SerializeField] private GameObject SettingsCanvas;
@@ -10,35 +11,45 @@ public class SettingsHandler : MonoBehaviour
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private Slider mouseSensitivitySlider;
     [SerializeField] private Toggle muteAllToggle;
-    //update the UI elements with current settings when the settings menu is opened
+    public void UpdateUIOnLoad()
+    {
+        masterVolumeSlider.value = SettingsManager.Instance.GetMasterVolume();
+        musicVolumeSlider.value = SettingsManager.Instance.GetMusicVolume();
+        sfxVolumeSlider.value = SettingsManager.Instance.GetSfxVolume();
+        mouseSensitivitySlider.value = SettingsManager.Instance.GetMouseSensitivity();
+        muteAllToggle.isOn = SettingsManager.Instance.GetMuteAll();
+
+    }
     public void OnBackPressed()
     {
         SettingsCanvas.SetActive(false);
         SettingsManager.Instance.SaveSettings();
+        GameStateManager.Instance.LastGameState();
     }
     public void OnResetPressed()
     {
         SettingsManager.Instance.ResetToDefault();
+        UpdateUIOnLoad();
     }
-    public void OnMasterVolumeChanged(float value)
+    public void OnMasterVolumeChanged(Slider caller)
     {
-        SettingsManager.Instance.SetMasterVolume(value);
+        SettingsManager.Instance.SetMasterVolume(caller.value);
     }
-    public void OnMusicVolumeChanged(float value)
+    public void OnMusicVolumeChanged(Slider caller)
     {
-        SettingsManager.Instance.SetMusicVolume(value);
+        SettingsManager.Instance.SetMusicVolume(caller.value);
     }
-    public void OnSFXVolumeChanged(float value)
+    public void OnSFXVolumeChanged(Slider caller)
     {
-        SettingsManager.Instance.SetSfxVolume(value);
+        SettingsManager.Instance.SetSfxVolume(caller.value);
     }
-    public void OnMuteAll(bool isMuted)
+    public void OnMuteAll(Toggle caller)
     {
-        SettingsManager.Instance.SetMuteAll(isMuted);
+        SettingsManager.Instance.SetMuteAll(caller);
     }
-    public void MouseSensitivity(float value)
+    public void MouseSensitivity(Slider caller)
     {
-        SettingsManager.Instance.SetMouseSensitivity(value);
+        SettingsManager.Instance.SetMouseSensitivity(caller.value);
     }
 
 }

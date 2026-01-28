@@ -81,7 +81,7 @@ public class InputManager : MonoBehaviour
                 break;
             case GameState.Playing:
                 EnableGameplay();
-                EnableUI();
+                DisableUI();
                 break;
             case GameState.Paused:
                 DisableGameplay();
@@ -89,7 +89,7 @@ public class InputManager : MonoBehaviour
                 break;
             case GameState.BossFight:
                 EnableGameplay();
-                DisableUI();
+                EnableUI();
                 break;
             case GameState.GameOver:
                 DisableGameplay();
