@@ -1,6 +1,6 @@
 using UnityEngine;
-
-public class PlayerMovement : MonoBehaviour
+using System;
+public class PlayerMovement : MonoBehaviour, IDamageable
 {
     [Header("References")]
     public PlayerMovementStats MoveStats;
@@ -34,6 +34,29 @@ public class PlayerMovement : MonoBehaviour
 
     private float _coyoteTimer;
 
+    public int maxHealth = 3;
+    public int currentHealth;
+
+    public event Action<int, int> OnHealthChanged;
+    public event Action<float, float> OnPsychosisChanged;
+
+    public event Action OnPlayerDied;
+    public int MaxHealth => maxHealth;
+
+    [SerializeField] private float maxPsychosis = 100f;
+    [SerializeField] private float psychosisIncreasePerSecond = 5f;
+    [SerializeField] private float psychosisKillReduction = 25f;
+
+    private float currentPsychosis;
+    private void Start()
+    {
+        GameManager.Instance.RegisterPlayer(this);
+        currentHealth = maxHealth;
+        currentPsychosis = 0f;
+        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+
+        GameManager.Instance.RegisterPlayer(this);
+    }
     private void Awake()
     {
         _isFacingRight = true;
@@ -44,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
     {
         CountTimer();
         JumpChecks();
+        UpdatePsychosis();
     }
 
     private void FixedUpdate()
@@ -60,6 +84,69 @@ public class PlayerMovement : MonoBehaviour
             Move(MoveStats.AirAcceleration, MoveStats.AirDeceleration, InputController.Movement);
         }
     }
+    #region psychosis
+    private void UpdatePsychosis()
+    {
+        currentPsychosis += psychosisIncreasePerSecond * Time.deltaTime;
+        currentPsychosis = Mathf.Clamp(currentPsychosis, 0f, maxPsychosis);
+
+        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+
+        if (currentPsychosis >= maxPsychosis)
+        {
+            DieFromPsychosis();
+        }
+    }
+    // PLACEHOLDER – später vom Enemy aufgerufen
+    public void OnEnemyKilled()
+    {
+        currentPsychosis -= psychosisKillReduction;
+        currentPsychosis = Mathf.Clamp(currentPsychosis, 0f, maxPsychosis);
+
+        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+    }
+    private void DieFromPsychosis()
+    {
+        Debug.Log("Player died from psychosis");
+
+        OnPlayerDied?.Invoke();
+        GameStateManager.Instance.SetState(GameState.GameOver);
+    }
+
+
+#endregion
+#region health
+public void TakeDamage(int amount, DamageSource source)
+    {
+        if (currentHealth <= 0)
+            return;
+
+        currentHealth -= amount;
+        currentHealth = Mathf.Max(currentHealth, 0);
+
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        if (currentHealth <= 0)
+        {
+            OnPlayerDied?.Invoke();
+            Die();
+        }
+        else
+        {
+            OnHit(source);
+        }
+    }
+
+    private void OnHit(DamageSource source)
+    {
+        //sprite change
+    }
+
+    private void Die()
+    {
+        GameStateManager.Instance.SetState(GameState.GameOver);
+    }
+    #endregion
 
     #region Movement
     private void Move(float acceleration, float deceleration, Vector2 moveInput)

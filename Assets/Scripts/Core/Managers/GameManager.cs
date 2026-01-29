@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 public class GameManager : MonoBehaviour
 {
     /// <summary>
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour
     /// -flag: new game/load
     /// </summary>
     public static GameManager Instance { get; private set; }
+
+    public event Action<PlayerMovement> OnPlayerReady;
 
     [Header("Game State")]
     private int currentLevel = 0; //level from save data
@@ -34,6 +37,10 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+    public void RegisterPlayer(PlayerMovement player)
+    {
+        OnPlayerReady?.Invoke(player);
     }
     /// <summary>
     /// starts a new game (resets all data)
@@ -131,7 +138,7 @@ public class GameManager : MonoBehaviour
 
         // 3. Instantiate the Prefab
         GameObject newPlayer = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-        CameraController camController = Object.FindFirstObjectByType<CameraController>();
+        CameraController camController = FindFirstObjectByType<CameraController>();
         //weitere Attribute wie Health, Psychometer etc. hier anwenden
     }
     public void QuitGame()

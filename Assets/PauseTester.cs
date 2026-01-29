@@ -5,8 +5,31 @@ public class PauseTester : MonoBehaviour
 {
     [SerializeField] private GameObject PauseCanvas;
     [SerializeField] private GameObject GameOverCanvas;
+
+
+    private IDamageable player;
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnPlayerReady += OnPlayerReady;
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnPlayerReady -= OnPlayerReady;
+    }
+
+    private void OnPlayerReady(PlayerMovement p)
+    {
+        player = p;
+    }
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            player?.TakeDamage(1, DamageSource.Enemy);
+        }
         CPressed();
         XPressed();
         Debug.LogWarning(GameStateManager.Instance.CurrentState);

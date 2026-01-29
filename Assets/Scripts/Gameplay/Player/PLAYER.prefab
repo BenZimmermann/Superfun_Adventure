@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5440828208027017330}
   - component: {fileID: 8796575392385131908}
   - component: {fileID: 5290052619688460347}
+  - component: {fileID: -1813587526801226407}
   - component: {fileID: 64858539377335074}
   m_Layer: 0
   m_Name: PLAYER
@@ -134,6 +135,19 @@ MonoBehaviour:
   MoveStats: {fileID: 11400000, guid: 92ec3f6aa97a9114589551db9994f99a, type: 2}
   _feetColl: {fileID: 8467371842898209361}
   _headColl: {fileID: 6650447440052736774}
+--- !u!114 &-1813587526801226407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074281915953062135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 709e0f298abe72044a8a8d5f8d0833aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Hearts: []
 --- !u!61 &64858539377335074
 BoxCollider2D:
   m_ObjectHideFlags: 0
