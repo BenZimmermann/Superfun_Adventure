@@ -30,6 +30,7 @@ public class PlayerMovementStats : ScriptableObject
 
     [Header("Jump Cut")]
     [Range(0.02f, 0.3f)] public float TimeForUpwardsCancel = 0.027f;
+    [Range(0f, 1f)] public float JumpCutMultiplier = 0.5f;
 
     [Header("Jump Apex")]
     [Range(0.5f, 1f)] public float ApexThreshold = 0.97f;
@@ -40,6 +41,11 @@ public class PlayerMovementStats : ScriptableObject
 
     [Header("Jump Coyote Timer")]
     [Range(0f, 1f)] public float JumpCoyoteTime = 0.1f;
+
+    [Header("Gravity Multipliers")]
+    [Range(0.5f, 3f)] public float FallGravityMultiplier = 1.8f; // NEU: Multiplier beim Fallen (weniger als vorher)
+    [Range(0.5f, 3f)]
+    public float LowJumpGravityMultiplier = 2f;
 
     [Header("Debug")]
     public bool DebugShowIsGroundedBox;

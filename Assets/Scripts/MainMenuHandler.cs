@@ -12,7 +12,7 @@ public class MainMenuHandler : MonoBehaviour
 
         if (saveData != null)
         {
-            LevelManager.Instance.LoadLevel(saveData.currentLevel);
+            GameManager.Instance.ContinueGame();
             GameStateManager.Instance.SetState(GameState.Playing);
         }
         else
@@ -23,7 +23,8 @@ public class MainMenuHandler : MonoBehaviour
         public void OnStartPressed()
     {
         SaveManager.Instance.CreateNewSave();
-        LevelManager.Instance.LoadLevel(0);
+        GameManager.Instance.StartNewGame();
+
         GameStateManager.Instance.SetState(GameState.Playing);
     }
     public void OnSettingPressed()
