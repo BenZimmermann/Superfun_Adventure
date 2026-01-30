@@ -125,7 +125,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 838639454}
     m_Modifications:
     - target: {fileID: 414881141468249008, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
       propertyPath: m_AnchorMax.y
@@ -158,6 +158,22 @@ PrefabInstance:
     - target: {fileID: 2736498350063879495, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2928887838249172912, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 838639453}
+    - target: {fileID: 2928887838249172912, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnRestartPressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939499796207164327, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 838639453}
+    - target: {fileID: 2939499796207164327, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnQuitPressed
       objectReference: {fileID: 0}
     - target: {fileID: 3574208954894656850, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
       propertyPath: m_SortingOrder
@@ -267,7 +283,8 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 396360969549595586, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -275,6 +292,11 @@ PrefabInstance:
 --- !u!1 &337412166 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2736498350063879495, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
+  m_PrefabInstance: {fileID: 337412165}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &337412167 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5873002691570945626, guid: 9da94ab716c3d7a4c902e8c425b38f77, type: 3}
   m_PrefabInstance: {fileID: 337412165}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &365835646
@@ -3491,6 +3513,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 443ebffc1bb128d4a9049c099389c47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &838639452
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 838639454}
+  - component: {fileID: 838639453}
+  m_Layer: 0
+  m_Name: GameOverController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &838639453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 838639452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf0ea784cd90814c9bee8c11d01adf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameOverCanvas: {fileID: 337412166}
+--- !u!4 &838639454
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 838639452}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 755.90814, y: 548.98145, z: -2.1205032}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 337412167}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1316586843
 GameObject:
   m_ObjectHideFlags: 0
@@ -4019,7 +4087,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PauseCanvas: {fileID: 698301769}
-  GameOverCanvas: {fileID: 337412166}
 --- !u!4 &1968751103
 Transform:
   m_ObjectHideFlags: 0
@@ -4040,7 +4107,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1509682942}
-  - {fileID: 337412165}
+  - {fileID: 838639454}
   - {fileID: 471008817}
   - {fileID: 698301768}
   - {fileID: 1351362295}

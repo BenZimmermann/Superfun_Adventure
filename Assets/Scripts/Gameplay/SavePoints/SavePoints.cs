@@ -50,13 +50,16 @@ public class SavePoints : MonoBehaviour
         saveData.currentLevel = levelToSave;
         saveData.health = player.currentHealth;
         saveData.psychometer = player.currentPsychosis;
-        // Speichere Spieler-Position als letzten Save Point
-        saveData.lastSavePoint = playerTransform.position;
+
         if (IsFinishline)
         {
             saveData.currentLevel++;
-
             Debug.Log("$Finishline reached! {saveData.level}");
+        }
+        else
+        {
+            // Speichere Spieler-Position als letzten Save Point nur wenn der checkpoint nicht die finishline ist
+            saveData.lastSavePoint = playerTransform.position;
         }
         if (SaveManager.Instance != null)
         {
@@ -73,13 +76,8 @@ public class SavePoints : MonoBehaviour
                 Debug.Log($"================================");
             }
         }
-        else
-        {
-            Debug.LogError("SaveManager Instance not found!");
-        }
     }
 
-    // Optional: Visualisierung im Editor
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;

@@ -4,7 +4,7 @@ using UnityEngine;
 public class PauseTester : MonoBehaviour
 {
     [SerializeField] private GameObject PauseCanvas;
-    [SerializeField] private GameObject GameOverCanvas;
+    //[SerializeField] private GameObject GameOverCanvas;
 
 
     private IDamageable player;
@@ -30,33 +30,33 @@ public class PauseTester : MonoBehaviour
         {
             player?.TakeDamage(1, DamageSource.Enemy);
         }
-        CPressed();
+        //CPressed();
         XPressed();
         Debug.LogWarning(GameStateManager.Instance.CurrentState);
 
     }
-    private void CPressed()
+    //private void CPressed()
 
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Debug.Log("Y gedrückt");
-            if (GameStateManager.Instance.CurrentState == GameState.GameOver)
-            {
-                GameOverCanvas.SetActive(false);
-                Debug.Log("GameOverCanvas deaktiviert");
-                GameStateManager.Instance.SetState(GameState.Playing);
-            }
-            else if (GameStateManager.Instance.CurrentState == GameState.Playing)
-            {
-                GameOverCanvas.SetActive(true);
-                Debug.Log("GameOverCanvas aktiviert");
-                GameStateManager.Instance.SetState(GameState.GameOver);
-            }
-            Debug.Log("Y gedrückt und ausgeführt");
-        }
+    //{
+    //    if (Input.GetKeyDown(KeyCode.C))
+    //    {
+    //        Debug.Log("Y gedrückt");
+    //        if (GameStateManager.Instance.CurrentState == GameState.GameOver)
+    //        {
+    //            GameOverCanvas.SetActive(false);
+    //            Debug.Log("GameOverCanvas deaktiviert");
+    //            GameStateManager.Instance.SetState(GameState.Playing);
+    //        }
+    //        else if (GameStateManager.Instance.CurrentState == GameState.Playing)
+    //        {
+    //            GameOverCanvas.SetActive(true);
+    //            Debug.Log("GameOverCanvas aktiviert");
+    //            GameStateManager.Instance.SetState(GameState.GameOver);
+    //        }
+    //        Debug.Log("Y gedrückt und ausgeführt");
+    //    }
 
-    }
+    //}
     private void XPressed()
     {
         if (Input.GetKeyDown(KeyCode.X))

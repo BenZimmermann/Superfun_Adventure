@@ -60,5 +60,6 @@ public enum GameState
         BossFight,
         GameOver,
         Corrupted,
-        Settings
+        Settings,
+        LevelEnd
     }

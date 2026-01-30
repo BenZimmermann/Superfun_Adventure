@@ -136,11 +136,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        //  HIER passiert die Magie
         player.RestoreFromSave(currentSaveData.health, currentSaveData.psychometer );
-
-        // Player meldet sich als ready
+        player.BeginRespawn();
         RegisterPlayer(player);
+
     }
     public void QuitGame()
     {

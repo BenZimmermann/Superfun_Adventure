@@ -47,15 +47,16 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     public float CurrentPsychosis => currentPsychosis;
 
     [SerializeField] private float maxPsychosis = 100f;
-    [SerializeField] private float psychosisIncreasePerSecond = 5f;
+    [SerializeField] private float psychosisIncreasePerSecond = 1f;
     [SerializeField] private float psychosisKillReduction = 25f;
+    [SerializeField] private float psychosisSafetyMargin = 15f;
 
+    private bool isRespawning;
+    private bool isDead;
 
     private void Start()
     {
         GameManager.Instance.RegisterPlayer(this);
-        //currentHealth = maxHealth;
-        //currentPsychosis = 0f;
         OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
 
         GameManager.Instance.RegisterPlayer(this);
@@ -64,6 +65,7 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     {
         _isFacingRight = true;
         _rb = GetComponent<Rigidbody2D>();
+
     }
 
     private void Update()
@@ -92,11 +94,9 @@ public class PlayerMovement : MonoBehaviour, IDamageable
 
     public void RestoreFromSave(int health, float psychosis)
     {
-        currentHealth = Mathf.Clamp(health, 0, maxHealth);
-        currentPsychosis = Mathf.Clamp(psychosis, 0f, maxPsychosis);
-
+        currentHealth = Mathf.Clamp(health, 1, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
-        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+        ApplyLoadedPsychosis(psychosis);
     }
 
     public void PushCurrentStateToUI()
@@ -106,9 +106,44 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     }
 
     #endregion
+
+    #region respawnTime
+
+
+    public void BeginRespawn()
+    {
+        isRespawning = true;
+        Invoke(nameof(EndRespawn), 2f);
+    }
+
+    private void EndRespawn()
+    {
+        isRespawning = false;
+    }
+    #endregion
+
     #region psychosis
+    public void ApplyLoadedPsychosis(float savedValue)
+    {
+        currentPsychosis = Mathf.Min( savedValue, maxPsychosis - psychosisSafetyMargin);
+
+        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+
+        BeginRespawnProtection();
+    }
+    private void BeginRespawnProtection()
+    {
+        isRespawning = true;
+        Invoke(nameof(EndRespawnProtection), 2.5f);
+    }
+
+    private void EndRespawnProtection()
+    {
+        isRespawning = false;
+    }
     private void UpdatePsychosis()
     {
+        if (isRespawning) return;
         currentPsychosis += psychosisIncreasePerSecond * Time.deltaTime;
         currentPsychosis = Mathf.Clamp(currentPsychosis, 0f, maxPsychosis);
 
@@ -129,16 +164,19 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     }
     private void DieFromPsychosis()
     {
-        Debug.Log("Player died from psychosis");
+        if (isDead) return;
+        isDead = true;
 
         OnPlayerDied?.Invoke();
         GameStateManager.Instance.SetState(GameState.GameOver);
     }
 
     #endregion
+
     #region health
     public void TakeDamage(int amount, DamageSource source)
     {
+        if (isRespawning) return;
         if (currentHealth <= 0)
             return;
 
@@ -149,8 +187,8 @@ public class PlayerMovement : MonoBehaviour, IDamageable
 
         if (currentHealth <= 0)
         {
-            OnPlayerDied?.Invoke();
-            Die();
+
+            DieFromHealth();
         }
         else
         {
@@ -163,9 +201,15 @@ public class PlayerMovement : MonoBehaviour, IDamageable
         //sprite change
     }
     //later gameManager will handle game over state
-    private void Die()
+    private void DieFromHealth()
     {
-        GameStateManager.Instance.SetState(GameState.GameOver);
+
+        if (isDead) return;
+        isDead = true;
+
+        OnPlayerDied?.Invoke();
+           GameStateManager.Instance.SetState(GameState.GameOver);
+
     }
     #endregion
 
