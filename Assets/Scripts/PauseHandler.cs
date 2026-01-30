@@ -1,15 +1,40 @@
 using UnityEngine;
-
+using Unity.UI;
 public class PauseHandler : MonoBehaviour
 {
     [SerializeField] private GameObject PauseCanvas;
     [SerializeField] private GameObject SettingsCanvas;
     [SerializeField] private SettingsHandler settingsHandler;
+
+    private void Update()
+    {
+        if (InputController.EscIsUsed)
+        {
+            TogglePause();
+        }
+    }
+    private void TogglePause()
+    {
+
+        if (GameStateManager.Instance.CurrentState == GameState.Paused)
+        {
+            PauseCanvas.SetActive(false);
+            GameStateManager.Instance.SetState(GameState.Playing);
+            Time.timeScale = 1f;
+        }
+        else if (GameStateManager.Instance.CurrentState == GameState.Playing)
+        {
+            PauseCanvas.SetActive(true);
+            GameStateManager.Instance.SetState(GameState.Paused);
+            Time.timeScale = 0f;
+        }
+    }
     public void OnResumePressed()
     {
-        //later MainMenu to Playing
-        GameStateManager.Instance.LastGameState();
+        GameStateManager.Instance.SetState(GameState.Playing);
+        Time.timeScale = 1f;
         PauseCanvas.SetActive(false);
+
     }
     public void QuitPressed()
     {

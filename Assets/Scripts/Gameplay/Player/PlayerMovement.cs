@@ -123,7 +123,7 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     #endregion
 
     #region psychosis
-    public void ApplyLoadedPsychosis(float savedValue)
+        public void ApplyLoadedPsychosis(float savedValue)
     {
         currentPsychosis = Mathf.Min( savedValue, maxPsychosis - psychosisSafetyMargin);
 

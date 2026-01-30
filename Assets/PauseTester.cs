@@ -31,7 +31,7 @@ public class PauseTester : MonoBehaviour
             player?.TakeDamage(1, DamageSource.Enemy);
         }
         //CPressed();
-        XPressed();
+        //XPressed();
         Debug.LogWarning(GameStateManager.Instance.CurrentState);
 
     }
@@ -57,24 +57,24 @@ public class PauseTester : MonoBehaviour
     //    }
 
     //}
-    private void XPressed()
-    {
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            Debug.Log("X gedrückt");
-            if (GameStateManager.Instance.CurrentState == GameState.Paused)
-            {
-                PauseCanvas.SetActive(false);
-                Debug.Log("PauseCanvas deaktiviert");
-                GameStateManager.Instance.SetState(GameState.Playing);
-            }
-            else if (GameStateManager.Instance.CurrentState == GameState.Playing)
-            {
-                PauseCanvas.SetActive(true);
-                Debug.Log("PauseCanvas aktiviert");
-                GameStateManager.Instance.SetState(GameState.Paused);
-            }
-            Debug.Log("X gedrückt und ausgeführt");
-        }
-    }
+    //private void XPressed()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.X))
+    //    {
+    //        Debug.Log("X gedrückt");
+    //        if (GameStateManager.Instance.CurrentState == GameState.Paused)
+    //        {
+    //            PauseCanvas.SetActive(false);
+    //            Debug.Log("PauseCanvas deaktiviert");
+    //            GameStateManager.Instance.SetState(GameState.Playing);
+    //        }
+    //        else if (GameStateManager.Instance.CurrentState == GameState.Playing)
+    //        {
+    //            PauseCanvas.SetActive(true);
+    //            Debug.Log("PauseCanvas aktiviert");
+    //            GameStateManager.Instance.SetState(GameState.Paused);
+    //        }
+    //        Debug.Log("X gedrückt und ausgeführt");
+    //    }
+    //}
 }

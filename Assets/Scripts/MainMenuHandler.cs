@@ -1,6 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
-
+using Unity.UI;
 public class MainMenuHandler : MonoBehaviour
 {
     [SerializeField] private GameObject SettingsCanvas;

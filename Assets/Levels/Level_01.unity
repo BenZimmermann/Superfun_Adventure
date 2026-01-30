@@ -3166,7 +3166,7 @@ GameObject:
   - component: {fileID: 579448021}
   - component: {fileID: 579448023}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: SavePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3254,7 +3254,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1418589571}
     m_Modifications:
     - target: {fileID: 713438198923199681, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_Name
@@ -3267,6 +3267,22 @@ PrefabInstance:
     - target: {fileID: 1138540487500746942, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_SortingOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1502970060150707848, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1418589572}
+    - target: {fileID: 1502970060150707848, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnResumePressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 2051474179968429735, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1418589572}
+    - target: {fileID: 2051474179968429735, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnSettingsPressed
       objectReference: {fileID: 0}
     - target: {fileID: 2278418506356570794, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: SettingsCanvas
@@ -3324,6 +3340,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8102625490095590486, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1418589572}
+    - target: {fileID: 8102625490095590486, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: QuitPressed
+      objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -3366,7 +3390,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 2.1205032
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3374,23 +3398,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -755.90814
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -548.98145
       objectReference: {fileID: 0}
     - target: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3436,6 +3460,11 @@ PrefabInstance:
 --- !u!1 &698301769 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 713438198923199681, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
+  m_PrefabInstance: {fileID: 698301768}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &698301770 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8640730017870153235, guid: 34606b10c32116145b357a2ba95a022e, type: 3}
   m_PrefabInstance: {fileID: 698301768}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &718515788
@@ -3751,6 +3780,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e642de0951be8cd4e97c94c7efb1d9d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1418589570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1418589571}
+  - component: {fileID: 1418589572}
+  m_Layer: 0
+  m_Name: PauseController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1418589571
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418589570}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 755.90814, y: 548.98145, z: -2.1205032}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 698301770}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1418589572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418589570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9e7e8e687ed1e044a7c047aff1d536c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PauseCanvas: {fileID: 698301769}
+  SettingsCanvas: {fileID: 1351362296}
+  settingsHandler: {fileID: 1351362297}
 --- !u!1 &1468466238
 GameObject:
   m_ObjectHideFlags: 0
@@ -3763,7 +3840,7 @@ GameObject:
   - component: {fileID: 1468466240}
   - component: {fileID: 1468466242}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: savePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4108,8 +4185,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 1509682942}
   - {fileID: 838639454}
+  - {fileID: 1418589571}
   - {fileID: 471008817}
-  - {fileID: 698301768}
   - {fileID: 1351362295}
   - {fileID: 1968751103}
   - {fileID: 1316586846}

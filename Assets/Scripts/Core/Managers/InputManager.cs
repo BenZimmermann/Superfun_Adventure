@@ -83,10 +83,10 @@ public class InputManager : MonoBehaviour
                 EnableGameplay();
                 DisableUI();
                 break;
-            case GameState.Paused:
-                DisableGameplay();
-                EnableUI();
-                break;
+            //case GameState.Paused:
+            //    EnableGameplay();
+            //    EnableUI();
+            //    break;
             case GameState.BossFight:
                 EnableGameplay();
                 EnableUI();
