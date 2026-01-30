@@ -118,28 +118,29 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("No save data to apply!");
             return;
         }
-        if (playerPrefab == null)
-        {
-            Debug.LogError("Player Prefab is not assigned in GameManager!");
-            return;
-        }
+
         GameObject existingPlayer = GameObject.FindGameObjectWithTag("Player");
         if (existingPlayer != null)
-        {
             Destroy(existingPlayer);
-        }
 
-        // 2. Determine spawn position
-        Vector3 spawnPosition = Vector3.zero; // Default spawn
-        if (currentSaveData.lastSavePoint != Vector2.zero)
-        {
-            spawnPosition = currentSaveData.lastSavePoint;
-        }
+        Vector3 spawnPosition = currentSaveData.lastSavePoint != Vector2.zero
+            ? currentSaveData.lastSavePoint
+            : Vector3.zero;
 
-        // 3. Instantiate the Prefab
         GameObject newPlayer = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-        CameraController camController = FindFirstObjectByType<CameraController>();
-        //weitere Attribute wie Health, Psychometer etc. hier anwenden
+
+        PlayerMovement player = newPlayer.GetComponent<PlayerMovement>();
+        if (player == null)
+        {
+            Debug.LogError("Spawned player has no PlayerMovement!");
+            return;
+        }
+
+        //  HIER passiert die Magie
+        player.RestoreFromSave(currentSaveData.health, currentSaveData.psychometer );
+
+        // Player meldet sich als ready
+        RegisterPlayer(player);
     }
     public void QuitGame()
     {

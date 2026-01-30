@@ -9,7 +9,21 @@ public class SavePoints : MonoBehaviour
 
     // Referenzen zu den Spieler-Komponenten (falls vorhanden)
     private bool hasSaved = false; // Verhindert mehrfaches Speichern
+    private PlayerMovement player;
+    private void OnEnable()
+    {
+        GameManager.Instance.OnPlayerReady += BindPlayer;
+    }
 
+    private void OnDisable()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnPlayerReady -= BindPlayer;
+    }
+    private void BindPlayer(PlayerMovement p)
+    {
+        player = p;
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && !hasSaved)
@@ -34,7 +48,8 @@ public class SavePoints : MonoBehaviour
         // Speichere Level-Informationen
         saveData.level = levelToSave;
         saveData.currentLevel = levelToSave;
-
+        saveData.health = player.currentHealth;
+        saveData.psychometer = player.currentPsychosis;
         // Speichere Spieler-Position als letzten Save Point
         saveData.lastSavePoint = playerTransform.position;
         if (IsFinishline)

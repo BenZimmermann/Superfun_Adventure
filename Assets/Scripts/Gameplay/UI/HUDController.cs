@@ -1,3 +1,4 @@
+using NUnit.Compatibility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +17,6 @@ public class HUDController : MonoBehaviour
     private PlayerMovement player;
 
 
-
     private void OnEnable()
     {
         GameManager.Instance.OnPlayerReady += BindPlayer;
@@ -33,7 +33,8 @@ public class HUDController : MonoBehaviour
 
         player.OnHealthChanged += UpdateHealth;
        player.OnPsychosisChanged += UpdatePsychosis;
-       // player.OnPlayerDied += OnPlayerDied;
+        player.PushCurrentStateToUI();
+        // player.OnPlayerDied += OnPlayerDied;
     }
 
     private void OnDestroy()

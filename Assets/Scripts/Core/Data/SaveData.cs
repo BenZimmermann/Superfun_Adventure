@@ -3,7 +3,7 @@ using UnityEngine;
 public class SaveData
 {
     public int level;
-    public float health;
+    public int health;
     public float psychometer;
     public Vector2 lastSavePoint;
     public float distortionLevel;
@@ -13,7 +13,7 @@ public class SaveData
     public SaveData()
     {
         level = 1;
-        health = 100f;
+        health = 100;
         psychometer = 0f;
         lastSavePoint = Vector2.zero;
         distortionLevel = 0f;

@@ -36,23 +36,26 @@ public class PlayerMovement : MonoBehaviour, IDamageable
 
     public int maxHealth = 3;
     public int currentHealth;
+    public float currentPsychosis;
 
     public event Action<int, int> OnHealthChanged;
     public event Action<float, float> OnPsychosisChanged;
 
     public event Action OnPlayerDied;
     public int MaxHealth => maxHealth;
+    public int CurrentHealth => currentHealth;
+    public float CurrentPsychosis => currentPsychosis;
 
     [SerializeField] private float maxPsychosis = 100f;
     [SerializeField] private float psychosisIncreasePerSecond = 5f;
     [SerializeField] private float psychosisKillReduction = 25f;
 
-    private float currentPsychosis;
+
     private void Start()
     {
         GameManager.Instance.RegisterPlayer(this);
-        currentHealth = maxHealth;
-        currentPsychosis = 0f;
+        //currentHealth = maxHealth;
+        //currentPsychosis = 0f;
         OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
 
         GameManager.Instance.RegisterPlayer(this);
@@ -84,6 +87,25 @@ public class PlayerMovement : MonoBehaviour, IDamageable
             Move(MoveStats.AirAcceleration, MoveStats.AirDeceleration, InputController.Movement);
         }
     }
+    #region UI sync
+
+
+    public void RestoreFromSave(int health, float psychosis)
+    {
+        currentHealth = Mathf.Clamp(health, 0, maxHealth);
+        currentPsychosis = Mathf.Clamp(psychosis, 0f, maxPsychosis);
+
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+    }
+
+    public void PushCurrentStateToUI()
+    {
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+    }
+
+    #endregion
     #region psychosis
     private void UpdatePsychosis()
     {
@@ -113,10 +135,9 @@ public class PlayerMovement : MonoBehaviour, IDamageable
         GameStateManager.Instance.SetState(GameState.GameOver);
     }
 
-
-#endregion
-#region health
-public void TakeDamage(int amount, DamageSource source)
+    #endregion
+    #region health
+    public void TakeDamage(int amount, DamageSource source)
     {
         if (currentHealth <= 0)
             return;
@@ -141,7 +162,7 @@ public void TakeDamage(int amount, DamageSource source)
     {
         //sprite change
     }
-
+    //later gameManager will handle game over state
     private void Die()
     {
         GameStateManager.Instance.SetState(GameState.GameOver);
