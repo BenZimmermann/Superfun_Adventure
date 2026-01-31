@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     private Rigidbody2D _rb;
 
     private Vector2 _moveVelocity;
-    private bool _isFacingRight;
+    public bool _isFacingRight;
 
     private RaycastHit2D _groundHit;
     private RaycastHit2D _headHit;

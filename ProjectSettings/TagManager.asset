@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
+  - Player
   - 
   - 
   - 
@@ -46,6 +46,12 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 3935372241
+    locked: 0
+  - name: Bullets
+    uniqueID: 2092833337
+    locked: 0
+  - name: Background
+    uniqueID: 772906395
     locked: 0
   m_RenderingLayers:
   - Default

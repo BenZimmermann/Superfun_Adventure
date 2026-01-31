@@ -12,11 +12,14 @@ public class InputController : MonoBehaviour
     public static bool JumpWasReleased;
     public static bool RunIsHeld;
     public static bool EscIsUsed;
+    public static bool ShootWasPressed;
+    public static bool ShootWasHeld;
 
     private InputAction _moveAction;
     private InputAction _jumpAction;
     private InputAction _runAction;
     private InputAction _pauseAction;
+    private InputAction _shootAction;
 
     public InputController() { return; }
     private void Awake()
@@ -27,6 +30,7 @@ public class InputController : MonoBehaviour
         _jumpAction = PlayerInput.actions["Jump"];
         _runAction = PlayerInput.actions["Run"];
         _pauseAction = PlayerInput.actions["Pause"];
+        _shootAction = PlayerInput.actions["Shoot"];
     }
     public void JumpAction(InputAction.CallbackContext context)
     {
@@ -52,5 +56,7 @@ public class InputController : MonoBehaviour
 
         RunIsHeld = _runAction.IsPressed();
         EscIsUsed = _pauseAction.WasPressedThisFrame();
+        ShootWasPressed = _shootAction.WasPressedThisFrame();
+        ShootWasHeld = _shootAction.IsPressed();
     }
 }
