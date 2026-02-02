@@ -135,6 +135,7 @@ MonoBehaviour:
   MoveStats: {fileID: 11400000, guid: 92ec3f6aa97a9114589551db9994f99a, type: 2}
   _feetColl: {fileID: 8467371842898209361}
   _headColl: {fileID: 6650447440052736774}
+  _isFacingRight: 0
   maxHealth: 3
   currentHealth: 0
   currentPsychosis: 0
@@ -156,8 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 5936171341293135467, guid: 5fcad4191b812e54b8f1becbf6ce4af6, type: 3}
   firePoint: {fileID: 815334792754743663}
-  projectileSpeed: 15
-  fireRate: 0.4
+  bulletData: {fileID: 11400000, guid: e809e1f5ca87c954ea0e1b7379dd8396, type: 2}
 --- !u!61 &64858539377335074
 BoxCollider2D:
   m_ObjectHideFlags: 0

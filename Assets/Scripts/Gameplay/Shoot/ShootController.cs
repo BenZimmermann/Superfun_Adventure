@@ -5,8 +5,7 @@ public class PlayerShoot : MonoBehaviour
     [Header("Shooting Settings")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private float projectileSpeed = 10f;
-    [SerializeField] private float fireRate = 0.5f;
+    [SerializeField] private BulletData bulletData;
 
     private float nextFireTime = 0f;
     private PlayerMovement playerMovement;
@@ -28,7 +27,7 @@ public class PlayerShoot : MonoBehaviour
         if (InputController.ShootWasHeld && Time.time >= nextFireTime)
         {
             Shoot();
-            nextFireTime = Time.time + fireRate;
+            nextFireTime = Time.time + bulletData.fireRate;
         }
     }
 
@@ -46,20 +45,22 @@ public class PlayerShoot : MonoBehaviour
             return;
         }
 
-        // Erstelle das Projektil
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
-        // Hole die Rigidbody2D Komponente
+        SpriteRenderer spriteRenderer = projectile.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null && bulletData.bulletSprite != null)
+        {
+            spriteRenderer.sprite = bulletData.bulletSprite;
+        }
+ 
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
 
         if (rb != null)
         {
-            // Schieße in die Richtung, in die der Spieler schaut (nutzt PlayerMovement.IsFacingRight)
             Vector2 shootDirection = playerMovement._isFacingRight ? Vector2.right : Vector2.left;
-            rb.linearVelocity = shootDirection * projectileSpeed;
+            rb.linearVelocity = shootDirection * bulletData.projectileSpeed;
         }
 
-        // Optional: Zerstöre das Projektil nach 3 Sekunden
-        Destroy(projectile, 3f);
+        Destroy(projectile, bulletData.lifeTime);
     }
 }
