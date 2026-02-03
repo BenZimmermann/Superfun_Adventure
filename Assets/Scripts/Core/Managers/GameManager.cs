@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public event Action<PlayerMovement> OnPlayerReady;
 
     [Header("Game State")]
-    private int currentLevel = 0; //level from save data
+    private int currentLevel = 0; 
     private bool isNewGame = true;
 
     public int CurrentLevel => currentLevel;
@@ -54,11 +54,13 @@ public class GameManager : MonoBehaviour
         GameStateManager.Instance.SetState(GameState.Playing);
         LevelManager.Instance.LoadLevel(currentLevel);
 
+        Time.timeScale = 1f;
         StartCoroutine(ApplySaveDataAfterDelay(0.1f));
     }
     public void ContinueGame()
     {
-        if(!SaveManager.Instance.HasSave())
+        Time.timeScale = 1f;
+        if (!SaveManager.Instance.HasSave())
         {
             Debug.LogWarning("No Save File Found, Starting New Game Instead");
             StartNewGame();

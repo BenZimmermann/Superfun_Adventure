@@ -10,6 +10,7 @@ public abstract class EnemyState
         this.stateMachine = stateMachine;
         this.enemy = enemy;
     }
+
     #region State Methods
     public virtual void Enter() {Debug.Log($"[{enemy.gameObject.name}] Entering State: {GetType().Name}");}
     public virtual void Update() {}
@@ -23,11 +24,13 @@ public abstract class EnemyState
 
         public IdleState(EnemyStatemachine stateMachine, BaseEnemy enemy) : base(stateMachine, enemy)
         {
+
         }
 
         public override void Enter()
         {
             base.Enter();
+
         }
 
         public override void Update()
@@ -50,6 +53,7 @@ public abstract class EnemyState
         public override void Enter()
         {
             base.Enter();
+
         }
 
         public override void Update()
@@ -86,33 +90,21 @@ public abstract class EnemyState
     #region AttackState
     public class AttackState : EnemyState
     {
-        private float attackTimer;
-        private float attackDuration = 1.5f; // Wie lange angreifen
-
         public AttackState(EnemyStatemachine stateMachine, BaseEnemy enemy) : base(stateMachine, enemy)
         {
+
         }
 
         public override void Enter()
         {
             base.Enter();
-            attackTimer = 0f;
+       
         }
 
         public override void Update()
         {
             base.Update();
 
-            attackTimer += Time.deltaTime;
-
-            // Hier würde Attack Logic kommen
-            // z.B. Play Attack Animation, Deal Damage
-
-            // Nach Attack -> zurück zu Idle
-            if (attackTimer >= attackDuration)
-            {
-                stateMachine.ChangeState(enemy.IdleState);
-            }
         }
     }
     #endregion
@@ -122,6 +114,7 @@ public abstract class EnemyState
     {
         public DieState(EnemyStatemachine stateMachine, BaseEnemy enemy) : base(stateMachine, enemy)
         {
+
         }
 
         public override void Enter()
