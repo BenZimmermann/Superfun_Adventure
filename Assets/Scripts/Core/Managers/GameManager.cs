@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     public bool IsNewGame => isNewGame;
 
     [SerializeField] private GameObject playerPrefab;
-    private SaveData currentSaveData;
+    public SaveData currentSaveData;
 
     private void Awake()
     {
@@ -54,12 +54,12 @@ public class GameManager : MonoBehaviour
         GameStateManager.Instance.SetState(GameState.Playing);
         LevelManager.Instance.LoadLevel(currentLevel);
 
-        Time.timeScale = 1f;
+        ResumeGame();
         StartCoroutine(ApplySaveDataAfterDelay(0.1f));
     }
     public void ContinueGame()
     {
-        Time.timeScale = 1f;
+        ResumeGame();
         if (!SaveManager.Instance.HasSave())
         {
             Debug.LogWarning("No Save File Found, Starting New Game Instead");
@@ -142,6 +142,14 @@ public class GameManager : MonoBehaviour
         player.BeginRespawn();
         RegisterPlayer(player);
 
+    }
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
     }
     public void QuitGame()
     {

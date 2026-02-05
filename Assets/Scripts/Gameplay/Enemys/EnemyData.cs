@@ -1,5 +1,6 @@
 using Unity.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "NewEnemyData", menuName = "Enemy/Enemy Data")]
 public class EnemyData : ScriptableObject
@@ -16,19 +17,15 @@ public class EnemyData : ScriptableObject
 
     [Header("Stats")]
     public int maxHealth = 4;
-    public int damageAmount = 1;
     public float moveSpeed = 3f;
-
-    [Header("Combat")]
-    public float patrolChangeTime = 1.5f;
-    public float attackRange = 1.5f;
-    public float attackCooldown = 1f;
 
     [Header("Detection")]
     public float detectionRange = 5f;
+    public float chaseRange = 12f;
+    public float patrolChangeTime = 1.5f;
 
     [Header("Attacks")]
-    //public List<EnemyAttackData> attacks;
+    public List<AttackData> attacks;
 
     [Header("Effects")]
     public GameObject deathEffect;

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b5e003151b3dfd4ba7c25761b8d76d4, type: 3}
+  m_Name: PockeAttack
+  m_EditorClassIdentifier: 
+  attackName: Poke
+  attackType: 1
+  damage: 1
+  range: 2.3
+  cooldown: 1
+  windupTime: 0.2
+  attackDuration: 0.3
+  attackPoints: []
+  attackEffectPrefab: {fileID: 0}
+  requiresLineOfSight: 1
+  lockMovementDuringAttack: 1

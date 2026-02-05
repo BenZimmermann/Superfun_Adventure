@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 662bb61e4a119ca43b369ddbea2d5bfd, type: 3}
+  m_Name: Wizzard
+  m_EditorClassIdentifier: 
+  enemyName: 
+  canIdle: 1
+  canWalk: 1
+  canFly: 0
+  canAttack: 1
+  canDie: 1
+  maxHealth: 10
+  moveSpeed: 2
+  detectionRange: 7
+  chaseRange: 9
+  patrolChangeTime: 0.5
+  attacks:
+  - {fileID: 11400000, guid: 17b8026be45f1f54cb32e83a0d11cf8a, type: 2}
+  deathEffect: {fileID: 0}
+  animator: {fileID: 0}

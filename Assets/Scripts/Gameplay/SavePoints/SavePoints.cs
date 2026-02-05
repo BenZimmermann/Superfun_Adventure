@@ -55,6 +55,9 @@ public class SavePoints : MonoBehaviour
         {
             saveData.currentLevel++;
             Debug.Log("$Finishline reached! {saveData.level}");
+            GameManager.Instance.PauseGame();
+            GameStateManager.Instance.SetState(GameState.LevelEnd);
+
         }
         else
         {
@@ -76,6 +79,7 @@ public class SavePoints : MonoBehaviour
                 Debug.Log($"================================");
             }
         }
+
     }
 
     private void OnDrawGizmos()

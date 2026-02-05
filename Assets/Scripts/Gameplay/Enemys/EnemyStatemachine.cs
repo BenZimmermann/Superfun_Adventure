@@ -2,42 +2,50 @@ using UnityEngine;
 
 public class EnemyStatemachine
 {
-    public EnemyState CurrentState { get; private set; }
+    private EnemyState currentState;
+    public EnemyState CurrentState => currentState;
+    //public EnemyState CurrentState { get; private set; }
 
     // Initialisiert die State Machine mit einem Start-State
     public void Initialize(EnemyState startingState)
     {
-        CurrentState = startingState;
-        CurrentState.Enter();
+        if (startingState == null)
+        {
+            Debug.LogError("[EnemyStatemachine] Cannot initialize with null state!");
+            return;
+        }
+
+        currentState = startingState;
+        currentState.Enter();
     }
 
     // Wechselt zu einem neuen State
     public void ChangeState(EnemyState newState)
     {
-        if (CurrentState != null)
+        if (newState == null)
         {
-            CurrentState.Exit();
+            Debug.LogError("[EnemyStatemachine] Cannot change to null state!");
+            return;
         }
 
-        CurrentState = newState;
-        CurrentState.Enter();
+        if (currentState == newState)
+        {
+            return; // Already in this state
+        }
+
+        currentState?.Exit();
+        currentState = newState;
+        currentState.Enter();
     }
-
-    // Update für den aktuellen State
-    public void Update()
+        // Update für den aktuellen State
+        public void Update()
     {
-        if (CurrentState != null)
-        {
-            CurrentState.Update();
-        }
+        currentState?.Update();
     }
 
     // FixedUpdate für den aktuellen State
     public void FixedUpdate()
     {
-        if (CurrentState != null)
-        {
-            CurrentState.FixedUpdate();
-        }
+        currentState?.FixedUpdate();
     }
 }

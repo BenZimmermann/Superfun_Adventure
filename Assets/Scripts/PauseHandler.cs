@@ -20,19 +20,20 @@ public class PauseHandler : MonoBehaviour
         {
             PauseCanvas.SetActive(false);
             GameStateManager.Instance.SetState(GameState.Playing);
-            Time.timeScale = 1f;
+            GameManager.Instance.ResumeGame();
         }
         else if (GameStateManager.Instance.CurrentState == GameState.Playing)
         {
             PauseCanvas.SetActive(true);
             GameStateManager.Instance.SetState(GameState.Paused);
-            Time.timeScale = 0f;
+            GameManager.Instance.PauseGame();
+           
         }
     }
     public void OnResumePressed()
     {
         GameStateManager.Instance.SetState(GameState.Playing);
-        Time.timeScale = 1f;
+        GameManager.Instance.ResumeGame();
         PauseCanvas.SetActive(false);
 
     }
