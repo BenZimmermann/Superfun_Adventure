@@ -14,6 +14,8 @@ public class AttackData : ScriptableObject
     public float windupTime = 0.2f;
     public float attackDuration = 0.3f;
 
+
+
     [Header("Spawn Points")]
     public Transform[] attackPoints;
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 662bb61e4a119ca43b369ddbea2d5bfd, type: 3}
   m_Name: Wizzard
   m_EditorClassIdentifier: 
-  enemyName: 
+  enemyName: Wizzard
   canIdle: 1
   canWalk: 1
   canFly: 0
@@ -26,4 +26,4 @@ MonoBehaviour:
   attacks:
   - {fileID: 11400000, guid: 17b8026be45f1f54cb32e83a0d11cf8a, type: 2}
   deathEffect: {fileID: 6044573240030900233, guid: 0ef656dc42521864f90474ebd3978b43, type: 3}
-  animator: {fileID: 0}
+  animator: {fileID: 9100000, guid: e245ef7a7b8438241b675f42f8fb4a9a, type: 2}

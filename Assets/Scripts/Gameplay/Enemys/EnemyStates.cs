@@ -42,7 +42,8 @@ public abstract class EnemyState
             timer = 0f;
             enemy.StopMovement(immediate: false); // Smooth stop
             enemy.SetAnimationBool("IsMoving", false);
-            enemy.SetAnimationBool("IsChasing", false);
+            enemy.SetAnimationBool("IsIdleing", true);   
+            //enemy.SetAnimationBool("IsChasing", false);
         }
 
         public override void Update()
@@ -93,7 +94,8 @@ public abstract class EnemyState
 
             bobTimer = 0f;
             enemy.SetAnimationBool("IsMoving", true);
-            enemy.SetAnimationBool("IsChasing", false);
+            enemy.SetAnimationBool("IsIdleing", false);
+            //enemy.SetAnimationBool("IsChasing", false);
         }
 
         public override void Update()
@@ -209,7 +211,7 @@ public abstract class EnemyState
             }
 
             bobTimer = 0f;
-            enemy.SetAnimationBool("IsChasing", true);
+            //enemy.SetAnimationBool("IsChasing", true);
             enemy.SetAnimationBool("IsMoving", true);
         }
 
@@ -250,7 +252,7 @@ public abstract class EnemyState
 
         public override void Exit()
         {
-            enemy.SetAnimationBool("IsChasing", false);
+            //enemy.SetAnimationBool("IsChasing", false);
         }
 
         private void ChaseAsFlying()
@@ -330,6 +332,7 @@ public abstract class EnemyState
         {
             cooldownTimer = 0f;
             waitingForCooldown = false;
+            enemy.SetAnimationBool("IsAttacking", true);
             currentAttack = enemy.GetAvailableAttack();
 
             if (currentAttack == null)
@@ -388,6 +391,7 @@ public abstract class EnemyState
 
         private void PerformNextAttack()
         {
+            enemy.SetAnimationBool("IsAttacking", true);
             // Get best available attack
             currentAttack = enemy.GetAvailableAttack();
 
@@ -408,7 +412,6 @@ public abstract class EnemyState
             Vector2 directionToPlayer = enemy.GetDirectionToPlayer();
             enemy.SetFacingDirection(directionToPlayer.x);
 
-            enemy.SetAnimationBool("IsAttacking", true);
 
             // Perform attack
             enemy.PerformAttack(currentAttack);
@@ -453,7 +456,7 @@ public abstract class EnemyState
             }
 
             // Trigger death animation
-            enemy.TriggerAnimation("Die");
+           // enemy.TriggerAnimation("Die");
 
             // Spawn death effect
             if (enemy.EnemyData?.deathEffect != null)
