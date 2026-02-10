@@ -6,10 +6,12 @@ public class SavePoints : MonoBehaviour
     [SerializeField] private int levelToSave = 1;
     [SerializeField] private bool showDebugMessages = true;
     [SerializeField] private bool IsFinishline = false;
+    [SerializeField] private GameObject SaveCanvas; 
 
     // Referenzen zu den Spieler-Komponenten (falls vorhanden)
     private bool hasSaved = false; // Verhindert mehrfaches Speichern
     private PlayerMovement player;
+    private float timer = 0f;
     private void OnEnable()
     {
         GameManager.Instance.OnPlayerReady += BindPlayer;
@@ -20,6 +22,20 @@ public class SavePoints : MonoBehaviour
         if (GameManager.Instance != null)
             GameManager.Instance.OnPlayerReady -= BindPlayer;
     }
+    private void Update()
+    {
+        if(!hasSaved && CompareTag("Player"))
+        {
+            timer += Time.deltaTime;
+            SaveCanvas.SetActive(true);
+
+            if (timer >= 2f && hasSaved) // Warte 0.5 Sekunden bevor der Spieler erneut speichern kann
+            {
+               SaveCanvas.SetActive(false);
+                timer = 0f;
+            }
+        }
+    }
     private void BindPlayer(PlayerMovement p)
     {
         player = p;
@@ -29,6 +45,7 @@ public class SavePoints : MonoBehaviour
         if (other.CompareTag("Player") && !hasSaved)
         {
             SaveGameAtCheckpoint(other.transform);
+            SaveCanvas.SetActive(true);
             hasSaved = true;
         }
     }
@@ -37,6 +54,7 @@ public class SavePoints : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            SaveCanvas.SetActive(false);
             hasSaved = false;
         }
     }

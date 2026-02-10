@@ -321,18 +321,79 @@ public abstract class EnemyState
     public class AttackState : EnemyState
     {
         private AttackData currentAttack;
-        private float postAttackWaitTimer;
-        private const float POST_ATTACK_WAIT = 0.3f; // Kurze Pause nach Attack
+        private float cooldownTimer;
+        private bool waitingForCooldown;
 
         public AttackState(EnemyStatemachine stateMachine, BaseEnemy enemy) : base(stateMachine, enemy) { }
 
         public override void Enter()
         {
-            postAttackWaitTimer = 0f;
+            cooldownTimer = 0f;
+            waitingForCooldown = false;
             currentAttack = enemy.GetAvailableAttack();
 
             if (currentAttack == null)
             {
+                TryChangeState(enemy.ChaseState);
+                return;
+            }
+
+            // Start first attack immediately
+            PerformNextAttack();
+        }
+
+        public override void Update()
+        {
+            if (enemy?.EnemyData == null) return;
+
+            // Check if player left chase range entirely
+            if (!enemy.IsPlayerInChaseRange())
+            {
+                TryChangeState(enemy.IdleState);
+                return;
+            }
+
+            // If currently attacking, wait
+            if (enemy.IsAttacking)
+                return;
+
+            // If waiting for cooldown
+            if (waitingForCooldown)
+            {
+                cooldownTimer += Time.deltaTime;
+
+                // Check if player is still in attack range
+                AttackData nextAttack = enemy.GetAvailableAttack();
+
+                if (nextAttack == null || !enemy.IsPlayerInAttackRange(nextAttack.range))
+                {
+                    // Player moved out of attack range - return to chase
+                    TryChangeState(enemy.ChaseState);
+                    return;
+                }
+
+                // Cooldown finished - perform next attack
+                if (cooldownTimer >= currentAttack.cooldown)
+                {
+                    PerformNextAttack();
+                }
+            }
+            else
+            {
+                // Attack just finished, start cooldown
+                waitingForCooldown = true;
+                cooldownTimer = 0f;
+            }
+        }
+
+        private void PerformNextAttack()
+        {
+            // Get best available attack
+            currentAttack = enemy.GetAvailableAttack();
+
+            if (currentAttack == null)
+            {
+                // No valid attack available - return to chase
                 TryChangeState(enemy.ChaseState);
                 return;
             }
@@ -351,46 +412,9 @@ public abstract class EnemyState
 
             // Perform attack
             enemy.PerformAttack(currentAttack);
-        }
 
-        public override void Update()
-        {
-            if (enemy?.EnemyData == null) return;
-
-            // Wait for attack to finish
-            if (enemy.IsAttacking) return;
-
-            // Short wait after attack ends
-            postAttackWaitTimer += Time.deltaTime;
-
-            if (postAttackWaitTimer < POST_ATTACK_WAIT)
-                return;
-
-            // Check if player is out of chase range
-            if (!enemy.IsPlayerInChaseRange())
-            {
-                TryChangeState(enemy.IdleState);
-                return;
-            }
-
-            // Check if still in attack range
-            AttackData nextAttack = enemy.GetAvailableAttack();
-            if (nextAttack != null && enemy.IsPlayerInAttackRange(nextAttack.range))
-            {
-                // Check cooldown
-                if (currentAttack != null && postAttackWaitTimer >= currentAttack.cooldown)
-                {
-                    // Ready for next attack - restart state
-                    TryChangeState(enemy.AttackState);
-                }
-                // Still in cooldown, stay in attack state and wait
-            }
-            else
-            {
-                // Player moved out of attack range but still in chase range
-                // Return to chase
-                TryChangeState(enemy.ChaseState);
-            }
+            // Reset cooldown flag
+            waitingForCooldown = false;
         }
 
         public override void Exit()
@@ -460,7 +484,6 @@ public abstract class EnemyState
 
             if (deathTimer >= DEATH_DELAY)
             {
-                Debug.Log($"[{enemy.name}] Destroying enemy after death.");
                 Object.Destroy(enemy.gameObject);
             }
         }

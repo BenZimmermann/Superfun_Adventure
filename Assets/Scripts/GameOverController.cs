@@ -22,7 +22,7 @@ public class GameOverController : MonoBehaviour
     private void Update()
     {
         //wenn game over und das level nicht 1 ist
-        if (gameOver && GameManager.Instance.currentSaveData.currentLevel > 1)
+        if (gameOver && GameManager.Instance.currentSaveData.currentLevel >= 1)
         {
             timer += Time.deltaTime;
             if (timer >= 3f) // Warte 1 Sekunde vor dem Starten der Animation

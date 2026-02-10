@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 662bb61e4a119ca43b369ddbea2d5bfd, type: 3}
-  m_Name: Wizzard
+  m_Name: OctoBase
   m_EditorClassIdentifier: 
-  enemyName: 
+  enemyName: Octo
   canIdle: 1
-  canWalk: 1
-  canFly: 0
+  canWalk: 0
+  canFly: 1
   canAttack: 1
   canDie: 1
-  maxHealth: 2
-  moveSpeed: 2
-  detectionRange: 7
-  chaseRange: 9
-  patrolChangeTime: 0.5
+  maxHealth: 4
+  moveSpeed: 3
+  detectionRange: 5
+  chaseRange: 12
+  patrolChangeTime: 1.5
   attacks:
-  - {fileID: 11400000, guid: 17b8026be45f1f54cb32e83a0d11cf8a, type: 2}
-  deathEffect: {fileID: 6044573240030900233, guid: 0ef656dc42521864f90474ebd3978b43, type: 3}
+  - {fileID: 11400000, guid: db88a5efb4a00a8488b6b6c954ed3b49, type: 2}
+  deathEffect: {fileID: 0}
   animator: {fileID: 0}
