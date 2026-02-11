@@ -15,9 +15,9 @@ MonoBehaviour:
   attackName: Poke
   attackType: 1
   damage: 1
-  range: 2.3
+  range: 2
   cooldown: 1
-  windupTime: 0.2
+  windupTime: 0.3
   attackDuration: 0.3
   attackPoints: []
   attackEffectPrefab: {fileID: 0}

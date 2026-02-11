@@ -2,6 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Enemy State System - Cuphead/Kirby inspired behavior
+/// Unity 6 compatible mit korrekter Animations-Priorität
 /// </summary>
 public abstract class EnemyState
 {
@@ -40,10 +41,12 @@ public abstract class EnemyState
         public override void Enter()
         {
             timer = 0f;
-            enemy.StopMovement(immediate: false); // Smooth stop
+            enemy.StopMovement(immediate: false);
+
+            // Setze ALLE Animations-Bools auf false, dann nur Idle auf true
             enemy.SetAnimationBool("IsMoving", false);
-            enemy.SetAnimationBool("IsIdleing", true);   
-            //enemy.SetAnimationBool("IsChasing", false);
+            enemy.SetAnimationBool("IsAttacking", false);
+            enemy.SetAnimationBool("IsIdleing", true);
         }
 
         public override void Update()
@@ -80,7 +83,7 @@ public abstract class EnemyState
         private const float EDGE_CHECK_DISTANCE = 1.2f;
         private const float EDGE_CHECK_HEIGHT = 0.5f;
 
-        private float bobTimer = 0f; // For floating enemies
+        private float bobTimer = 0f;
 
         public MoveState(EnemyStatemachine stateMachine, BaseEnemy enemy) : base(stateMachine, enemy) { }
 
@@ -93,9 +96,11 @@ public abstract class EnemyState
             }
 
             bobTimer = 0f;
-            enemy.SetAnimationBool("IsMoving", true);
+
+            // Setze alle anderen Bools auf false
             enemy.SetAnimationBool("IsIdleing", false);
-            //enemy.SetAnimationBool("IsChasing", false);
+            enemy.SetAnimationBool("IsAttacking", false);
+            enemy.SetAnimationBool("IsMoving", true);
         }
 
         public override void Update()
@@ -135,7 +140,7 @@ public abstract class EnemyState
 
             Vector2 targetPos = targetWaypoint.position;
 
-            // Add bobbing motion for flying enemies (Cuphead-style)
+            // Add bobbing motion for flying enemies
             if (enemy.EnemyData.canFly)
             {
                 bobTimer += Time.fixedDeltaTime * 3f;
@@ -158,7 +163,6 @@ public abstract class EnemyState
                 }
             }
 
-            // Smooth movement
             enemy.MoveTowards(targetPos, enemy.EnemyData.moveSpeed, smoothing: true);
         }
 
@@ -195,7 +199,7 @@ public abstract class EnemyState
         private const float HOVER_HEIGHT = 2.5f;
         private const float EDGE_CHECK_DISTANCE = 1.2f;
         private const float EDGE_CHECK_HEIGHT = 0.5f;
-        private const float ANTICIPATION_DISTANCE = 1f; // Kirby-style positioning
+        private const float ANTICIPATION_DISTANCE = 1f;
 
         private float bobTimer = 0f;
         private AttackData currentAttack = null;
@@ -211,7 +215,10 @@ public abstract class EnemyState
             }
 
             bobTimer = 0f;
-            //enemy.SetAnimationBool("IsChasing", true);
+
+            // Setze alle anderen Bools auf false
+            enemy.SetAnimationBool("IsIdleing", false);
+            enemy.SetAnimationBool("IsAttacking", false);
             enemy.SetAnimationBool("IsMoving", true);
         }
 
@@ -252,20 +259,18 @@ public abstract class EnemyState
 
         public override void Exit()
         {
-            //enemy.SetAnimationBool("IsChasing", false);
+            enemy.SetAnimationBool("IsMoving", false);
         }
 
         private void ChaseAsFlying()
         {
             Vector2 playerPos = enemy.PlayerTransform.position;
 
-            // Add bobbing motion (Cuphead-style)
             bobTimer += Time.fixedDeltaTime * 4f;
             float bobOffset = Mathf.Sin(bobTimer) * 0.4f;
 
             Vector2 targetPos = playerPos + Vector2.up * (HOVER_HEIGHT + bobOffset);
 
-            // Smooth chase
             enemy.MoveTowards(targetPos, enemy.EnemyData.moveSpeed * 1.2f, smoothing: true);
         }
 
@@ -274,15 +279,12 @@ public abstract class EnemyState
             Vector2 currentPos = enemy.transform.position;
             Vector2 playerPos = enemy.PlayerTransform.position;
 
-            // Anticipate player position (Kirby-style)
             Vector2 targetPos = playerPos;
             float playerDirection = Mathf.Sign(playerPos.x - currentPos.x);
 
-            // Stop at anticipation distance
             float distanceToPlayer = Mathf.Abs(playerPos.x - currentPos.x);
             if (distanceToPlayer > ANTICIPATION_DISTANCE)
             {
-                // Check for edge
                 if (IsEdgeAhead(playerDirection))
                 {
                     enemy.StopMovement(immediate: false);
@@ -290,12 +292,10 @@ public abstract class EnemyState
                     return;
                 }
 
-                // Move towards player
                 enemy.MoveTowards(playerPos, enemy.EnemyData.moveSpeed * 1.1f, smoothing: true);
             }
             else
             {
-                // At anticipation distance - slow down
                 enemy.StopMovement(immediate: false);
             }
         }
@@ -322,17 +322,23 @@ public abstract class EnemyState
 
     public class AttackState : EnemyState
     {
+        private enum AttackPhase
+        {
+            WindUp,      // Animation wird abgespielt
+            Execute,     // Angriff wird ausgeführt
+            Recovery,    // Nach dem Angriff
+            Cooldown     // Warten vor nächstem Angriff
+        }
+
         private AttackData currentAttack;
-        private float cooldownTimer;
-        private bool waitingForCooldown;
+        private float phaseTimer;
+        private AttackPhase currentPhase;
+        private bool attackExecuted;
 
         public AttackState(EnemyStatemachine stateMachine, BaseEnemy enemy) : base(stateMachine, enemy) { }
 
         public override void Enter()
         {
-            cooldownTimer = 0f;
-            waitingForCooldown = false;
-            enemy.SetAnimationBool("IsAttacking", true);
             currentAttack = enemy.GetAvailableAttack();
 
             if (currentAttack == null)
@@ -341,8 +347,11 @@ public abstract class EnemyState
                 return;
             }
 
-            // Start first attack immediately
-            PerformNextAttack();
+            // KRITISCH: Setze ALLE anderen Animations-Bools auf FALSE
+            enemy.SetAnimationBool("IsMoving", false);
+            enemy.SetAnimationBool("IsIdleing", false);
+
+            StartWindUpPhase();
         }
 
         public override void Update()
@@ -356,53 +365,35 @@ public abstract class EnemyState
                 return;
             }
 
-            // If currently attacking, wait
-            if (enemy.IsAttacking)
-                return;
+            phaseTimer += Time.deltaTime;
 
-            // If waiting for cooldown
-            if (waitingForCooldown)
+            switch (currentPhase)
             {
-                cooldownTimer += Time.deltaTime;
+                case AttackPhase.WindUp:
+                    UpdateWindUpPhase();
+                    break;
 
-                // Check if player is still in attack range
-                AttackData nextAttack = enemy.GetAvailableAttack();
+                case AttackPhase.Execute:
+                    UpdateExecutePhase();
+                    break;
 
-                if (nextAttack == null || !enemy.IsPlayerInAttackRange(nextAttack.range))
-                {
-                    // Player moved out of attack range - return to chase
-                    TryChangeState(enemy.ChaseState);
-                    return;
-                }
+                case AttackPhase.Recovery:
+                    UpdateRecoveryPhase();
+                    break;
 
-                // Cooldown finished - perform next attack
-                if (cooldownTimer >= currentAttack.cooldown)
-                {
-                    PerformNextAttack();
-                }
-            }
-            else
-            {
-                // Attack just finished, start cooldown
-                waitingForCooldown = true;
-                cooldownTimer = 0f;
+                case AttackPhase.Cooldown:
+                    UpdateCooldownPhase();
+                    break;
             }
         }
 
-        private void PerformNextAttack()
+        private void StartWindUpPhase()
         {
-            enemy.SetAnimationBool("IsAttacking", true);
-            // Get best available attack
-            currentAttack = enemy.GetAvailableAttack();
+            currentPhase = AttackPhase.WindUp;
+            phaseTimer = 0f;
+            attackExecuted = false;
 
-            if (currentAttack == null)
-            {
-                // No valid attack available - return to chase
-                TryChangeState(enemy.ChaseState);
-                return;
-            }
-
-            // Stop movement if required
+            // Stop movement
             if (currentAttack.lockMovementDuringAttack)
             {
                 enemy.StopMovement(immediate: true);
@@ -412,17 +403,99 @@ public abstract class EnemyState
             Vector2 directionToPlayer = enemy.GetDirectionToPlayer();
             enemy.SetFacingDirection(directionToPlayer.x);
 
+            // KRITISCH: Setze NUR IsAttacking auf true
+            enemy.SetAnimationBool("IsAttacking", true);
 
-            // Perform attack
+            Debug.Log($"[{enemy.name}] Starting attack wind-up animation. Duration: {currentAttack.windupTime}s");
+        }
+
+        private void UpdateWindUpPhase()
+        {
+            // Warte auf die Wind-Up Zeit (sollte mit deiner Attack-Animation-Länge übereinstimmen)
+            float windUpDuration = currentAttack.windupTime;
+
+            if (phaseTimer >= windUpDuration)
+            {
+                Debug.Log($"[{enemy.name}] Wind-up complete, executing attack!");
+                currentPhase = AttackPhase.Execute;
+                phaseTimer = 0f;
+                ExecuteAttack();
+            }
+        }
+
+        private void ExecuteAttack()
+        {
+            if (attackExecuted) return;
+
+            // JETZT wird der eigentliche Angriff ausgeführt (Projektil spawnen, etc.)
             enemy.PerformAttack(currentAttack);
+            attackExecuted = true;
 
-            // Reset cooldown flag
-            waitingForCooldown = false;
+            Debug.Log($"[{enemy.name}] Attack executed!");
+        }
+
+        private void UpdateExecutePhase()
+        {
+            // Kurze Pause während der Angriff aktiv ist
+            float executeDuration = currentAttack.attackDuration;
+
+            if (phaseTimer >= executeDuration)
+            {
+                currentPhase = AttackPhase.Recovery;
+                phaseTimer = 0f;
+
+                Debug.Log($"[{enemy.name}] Attack execute phase done, entering recovery");
+            }
+        }
+
+        private void UpdateRecoveryPhase()
+        {
+            // Recovery Phase - Animation läuft zurück zu Idle
+            float recoveryDuration = 0.2f;
+
+            if (phaseTimer >= recoveryDuration)
+            {
+                currentPhase = AttackPhase.Cooldown;
+                phaseTimer = 0f;
+
+                // Beende Attack Animation
+                enemy.SetAnimationBool("IsAttacking", false);
+
+                Debug.Log($"[{enemy.name}] Recovery done, entering cooldown");
+            }
+        }
+
+        private void UpdateCooldownPhase()
+        {
+            // Check if player is still in attack range
+            AttackData nextAttack = enemy.GetAvailableAttack();
+
+            if (nextAttack == null || !enemy.IsPlayerInAttackRange(nextAttack.range))
+            {
+                // Player moved out - return to chase
+                Debug.Log($"[{enemy.name}] Player out of range, returning to chase");
+                TryChangeState(enemy.ChaseState);
+                return;
+            }
+
+            // Cooldown finished - perform next attack
+            if (phaseTimer >= currentAttack.cooldown)
+            {
+                Debug.Log($"[{enemy.name}] Cooldown complete, starting new attack");
+                currentAttack = nextAttack;
+
+                // Setze Attack Bool wieder auf true für neuen Angriff
+                enemy.SetAnimationBool("IsAttacking", true);
+                StartWindUpPhase();
+            }
         }
 
         public override void Exit()
         {
+            // Stelle sicher, dass Attack Animation beendet wird
             enemy.SetAnimationBool("IsAttacking", false);
+
+            Debug.Log($"[{enemy.name}] Exiting attack state");
         }
     }
 
@@ -441,6 +514,11 @@ public abstract class EnemyState
         {
             deathTimer = 0f;
 
+            // Stoppe alle Animationen
+            enemy.SetAnimationBool("IsMoving", false);
+            enemy.SetAnimationBool("IsAttacking", false);
+            enemy.SetAnimationBool("IsIdleing", false);
+
             if (enemy?.Rb != null)
             {
                 enemy.Rb.linearVelocity = Vector2.zero;
@@ -453,10 +531,11 @@ public abstract class EnemyState
             foreach (var col in colliders)
             {
                 col.enabled = false;
+                
             }
 
             // Trigger death animation
-           // enemy.TriggerAnimation("Die");
+            //enemy.TriggerAnimation("Die");
 
             // Spawn death effect
             if (enemy.EnemyData?.deathEffect != null)
@@ -467,6 +546,7 @@ public abstract class EnemyState
                     Quaternion.identity
                 );
             }
+            Object.Destroy(enemy.gameObject);
         }
 
         public override void Update()
@@ -475,7 +555,7 @@ public abstract class EnemyState
 
             deathTimer += Time.deltaTime;
 
-            // Fade out effect (optional)
+            // Fade out effect
             var spriteRenderer = enemy.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
             {

@@ -18,12 +18,12 @@ MonoBehaviour:
   canFly: 1
   canAttack: 1
   canDie: 1
-  maxHealth: 4
+  maxHealth: 6
   moveSpeed: 3
-  detectionRange: 5
-  chaseRange: 12
-  patrolChangeTime: 1.5
+  detectionRange: 9
+  chaseRange: 13
+  patrolChangeTime: 0.5
   attacks:
   - {fileID: 11400000, guid: db88a5efb4a00a8488b6b6c954ed3b49, type: 2}
-  deathEffect: {fileID: 0}
-  animator: {fileID: 0}
+  deathEffect: {fileID: 6044573240030900233, guid: 0ef656dc42521864f90474ebd3978b43, type: 3}
+  animator: {fileID: 9100000, guid: d8c169c51ff8d5742b27e7ccf502b111, type: 2}

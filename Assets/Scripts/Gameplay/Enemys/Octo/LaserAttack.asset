@@ -16,9 +16,9 @@ MonoBehaviour:
   attackType: 2
   damage: 1
   range: 4
-  cooldown: 1
-  windupTime: 0.2
-  attackDuration: 0.3
+  cooldown: 2
+  windupTime: 0.3
+  attackDuration: 0.6
   attackPoints: []
   attackEffectPrefab: {fileID: 4058582013887312768, guid: e578f44653d914e42898fddcbe03e648, type: 3}
   requiresLineOfSight: 1

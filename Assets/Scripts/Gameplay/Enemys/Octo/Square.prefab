@@ -46,10 +46,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletData: {fileID: 11400000, guid: f4565f575d8280a43b70bf84b165169a, type: 2}
   projectileType: 1
-  laserLength: 10
+  laserLength: 6
   laserWidth: 0.2
   laserHitLayers:
     serializedVersion: 2
     m_Bits: 192
   continuousDamage: 1
-  damageTickRate: 0.2
+  damageTickRate: 0.3
