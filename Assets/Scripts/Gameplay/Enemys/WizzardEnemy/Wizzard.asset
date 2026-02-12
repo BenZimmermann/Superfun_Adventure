@@ -20,7 +20,7 @@ MonoBehaviour:
   canDie: 1
   maxHealth: 5
   moveSpeed: 2.5
-  detectionRange: 7
+  detectionRange: 10
   chaseRange: 13
   patrolChangeTime: 0.5
   attacks:
