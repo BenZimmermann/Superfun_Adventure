@@ -204,13 +204,13 @@ MonoBehaviour:
   active: 0
   type:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0
   response:
     m_OverrideState: 1
-    m_Value: 0.354
+    m_Value: 0.8
   texture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
@@ -372,16 +372,16 @@ MonoBehaviour:
   active: 0
   mode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   gaussianStart:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 10
   gaussianEnd:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 30
   gaussianMaxRadius:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 1
   highQualitySampling:
     m_OverrideState: 1
     m_Value: 0

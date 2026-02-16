@@ -40,6 +40,7 @@ public class PauseHandler : MonoBehaviour
     public void QuitPressed()
     {
         GameStateManager.Instance.SetState(GameState.MainMenu);
+        GameManager.Instance.ResumeGame();
         PauseCanvas.SetActive(false);
     }
     public void OnSettingsPressed()
