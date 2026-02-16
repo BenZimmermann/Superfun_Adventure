@@ -26,7 +26,7 @@ public class CrashManager : MonoBehaviour
 
     private void HandleGameStateChanged(GameState oldState, GameState newState)
     {
-        if (newState == GameState.GameOver && popupSpawner && GameManager.Instance.currentSaveData.currentLevel > 1)
+        if (newState == GameState.GameOver && popupSpawner && GameManager.Instance.currentSaveData.currentLevel >= 1)
         {
             StartCoroutine(SpawnCrashPopups());
         }
