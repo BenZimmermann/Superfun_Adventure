@@ -144,11 +144,14 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     private void UpdatePsychosis()
     {
         if (isRespawning) return;
-        currentPsychosis += psychosisIncreasePerSecond * Time.deltaTime;
-        currentPsychosis = Mathf.Clamp(currentPsychosis, 0f, maxPsychosis);
+        if (GameManager.Instance.currentSaveData.currentLevel >= 1)
+        {
+            currentPsychosis += psychosisIncreasePerSecond * Time.deltaTime;
+            currentPsychosis = Mathf.Clamp(currentPsychosis, 0f, maxPsychosis);
 
-        OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
-
+            OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
+        }
+        else return;
         if (currentPsychosis >= maxPsychosis)
         {
             DieFromPsychosis();

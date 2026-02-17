@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public event Action<PlayerMovement> OnPlayerReady;
 
+    public event Action OnSaveDataLoaded;
+
     [Header("Game State")]
     private int currentLevel = 0; 
     private bool isNewGame = true;
@@ -37,8 +39,9 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        ContinueGame();
     }
-    public void RegisterPlayer(PlayerMovement player)
+        public void RegisterPlayer(PlayerMovement player)
     {
         OnPlayerReady?.Invoke(player);
     }
@@ -50,6 +53,8 @@ public class GameManager : MonoBehaviour
         isNewGame = true;
         currentSaveData = SaveManager.Instance.CreateNewSave();
         currentLevel = currentSaveData.currentLevel;
+
+        OnSaveDataLoaded?.Invoke();
 
         GameStateManager.Instance.SetState(GameState.Playing);
         LevelManager.Instance.LoadLevel(currentLevel);
@@ -77,6 +82,8 @@ public class GameManager : MonoBehaviour
         }
         currentLevel = currentSaveData.currentLevel;
         Debug.Log($"Game loaded, Level: {currentSaveData.level}");
+
+        OnSaveDataLoaded?.Invoke();
         GameStateManager.Instance.SetState(GameState.Playing);
         LevelManager.Instance.LoadLevel(currentLevel);
         StartCoroutine(ApplySaveDataAfterDelay(0.1f));
@@ -143,6 +150,7 @@ public class GameManager : MonoBehaviour
         RegisterPlayer(player);
 
     }
+
     public void PauseGame()
     {
         Time.timeScale = 0f;

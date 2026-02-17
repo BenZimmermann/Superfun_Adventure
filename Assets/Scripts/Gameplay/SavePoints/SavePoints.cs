@@ -54,8 +54,10 @@ public class SavePoints : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+
             SaveCanvas.SetActive(false);
             hasSaved = false;
+            CorruptionManager.Instance.AddCorruption(10f); // Füge 10 Einheiten Korruption hinzu, wenn der Spieler den Checkpoint verlässt
         }
     }
 
@@ -68,6 +70,7 @@ public class SavePoints : MonoBehaviour
         saveData.currentLevel = levelToSave;
         saveData.health = player.currentHealth;
         saveData.psychometer = player.currentPsychosis;
+        saveData.distortionLevel = CorruptionManager.Instance.GetCorruptionLevel();
 
         if (IsFinishline)
         {

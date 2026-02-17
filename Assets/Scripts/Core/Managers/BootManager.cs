@@ -13,6 +13,7 @@ public class BootManager : MonoBehaviour
     [SerializeField] private GameObject audioManagerPrefab;
     [SerializeField] private GameObject settingsManagerPrefab;
     [SerializeField] private GameObject saveManagerPrefab;
+    [SerializeField] private GameObject corruptionManagerPrefab;
 
     private static bool hasBooted;
 
@@ -36,14 +37,16 @@ public class BootManager : MonoBehaviour
 
     private void InitializeManagers()
     {
-        CreateManager<GameManager>(gameManagerPrefab);
+        CreateManager<SaveManager>(saveManagerPrefab);
         CreateManager<GameStateManager>(gameStateManagerPrefab);
         CreateManager<LevelManager>(levelManagerPrefab);
+        CreateManager<CorruptionManager>(corruptionManagerPrefab);
+        CreateManager<GameManager>(gameManagerPrefab);
         CreateManager<InputManager>(inputManagerPrefab);
         CreateManager<UIManager>(uiManagerPrefab);
         CreateManager<AudioManager>(audioManagerPrefab);
         CreateManager<SettingsManager>(settingsManagerPrefab);
-        CreateManager<SaveManager>(saveManagerPrefab);
+
 
         GameStateManager.Instance.SetState(GameState.MainMenu);
     }

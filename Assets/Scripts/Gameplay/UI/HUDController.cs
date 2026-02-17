@@ -47,6 +47,7 @@ public class HUDController : MonoBehaviour
     }
     private void UpdatePsychosis(float current, float max)
     {
+        if(psychosisSlider == null) return;
         psychosisSlider.maxValue = max;
         psychosisSlider.value = current;
     }

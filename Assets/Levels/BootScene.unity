@@ -157,6 +157,7 @@ MonoBehaviour:
   audioManagerPrefab: {fileID: 4010368610877013877, guid: dca7776a9ef783148921f82bf0b7ae08, type: 3}
   settingsManagerPrefab: {fileID: 1968626349084074779, guid: 0456a5778f9d0f34f9e302ddf1262658, type: 3}
   saveManagerPrefab: {fileID: 575733598155857367, guid: e97ff9d1c2e0b62418860c66a4aadd52, type: 3}
+  corruptionManagerPrefab: {fileID: 1690627786512280431, guid: af76f2f9c5260564683de7c21f6292de, type: 3}
 --- !u!4 &1184629652
 Transform:
   m_ObjectHideFlags: 0
