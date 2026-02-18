@@ -18,7 +18,7 @@ MonoBehaviour:
   canFly: 0
   canAttack: 1
   canDie: 1
-  maxHealth: 5
+  maxHealth: 3
   moveSpeed: 2.5
   detectionRange: 10
   chaseRange: 13

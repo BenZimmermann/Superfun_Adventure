@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackName: Laser
   attackType: 2
-  damage: 1
-  range: 4
+  damage: 2
+  range: 6
   cooldown: 2
   windupTime: 0.3
   attackDuration: 0.6
