@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 662bb61e4a119ca43b369ddbea2d5bfd, type: 3}
-  m_Name: MargeEnemy
+  m_Name: Hearts
   m_EditorClassIdentifier: 
-  enemyName: Marge
+  enemyName: heartless
   canIdle: 1
-  canWalk: 1
-  canFly: 0
+  canWalk: 0
+  canFly: 1
   canAttack: 1
   canDie: 1
-  maxHealth: 4
+  maxHealth: 5
   moveSpeed: 2
-  detectionRange: 8
-  chaseRange: 14
+  detectionRange: 10
+  chaseRange: 13
   patrolChangeTime: 1.5
   attacks:
-  - {fileID: 11400000, guid: 5e8ed7f6c4e4480458eaa9ef9dfb734b, type: 2}
+  - {fileID: 11400000, guid: 787b408dab0f1024a95e64156bd3b6c3, type: 2}
   deathEffect: {fileID: 6044573240030900233, guid: 0ef656dc42521864f90474ebd3978b43, type: 3}
-  animator: {fileID: 9100000, guid: 9425d3eb745e5544bb9c2841234b975b, type: 2}
+  animator: {fileID: 9100000, guid: 8183bd7864e6a9a4db0c820152ed7fa6, type: 2}

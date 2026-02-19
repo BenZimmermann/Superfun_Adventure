@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b5e003151b3dfd4ba7c25761b8d76d4, type: 3}
-  m_Name: throwAttackData
+  m_Name: Slapattack
   m_EditorClassIdentifier: 
-  attackName: DualFire
-  attackType: 3
+  attackName: 
+  attackType: 0
   damage: 1
-  range: 5
+  range: 2.18
   cooldown: 1
-  windupTime: 0.2
+  windupTime: 0.29
   attackDuration: 0.3
   attackPoints: []
-  attackEffectPrefab: {fileID: 5213122518905157409, guid: 65c3fdb8a5142e249ade4e9cc03faa69, type: 3}
+  attackEffectPrefab: {fileID: 0}
   requiresLineOfSight: 1
   lockMovementDuringAttack: 1
