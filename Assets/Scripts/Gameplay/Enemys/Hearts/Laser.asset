@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackName: heartlesslaser
   attackType: 2
-  damage: 3
-  range: 9
-  cooldown: 1
+  damage: 2
+  range: 6
+  cooldown: 2
   windupTime: 0.2
   attackDuration: 0.6
   attackPoints: []
-  attackEffectPrefab: {fileID: 4462240037800220645, guid: 08deeb81adb7fd3418fd7adc26a01ad5, type: 3}
+  attackEffectPrefab: {fileID: 4058582013887312768, guid: e578f44653d914e42898fddcbe03e648, type: 3}
   requiresLineOfSight: 1
   lockMovementDuringAttack: 1

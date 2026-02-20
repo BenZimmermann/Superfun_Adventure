@@ -31743,7 +31743,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popupSpawner: 0
   crashMessagePrefabs:
-  - {fileID: 4753284181719339937, guid: 297ea6adeea105d4596cc9b975dae34d, type: 3}
+  - {fileID: 3881565836935273541, guid: 66b0386d93e7eb84e8be8a69083e79f6, type: 3}
   crashMessageLimit: 1
   spawnDelay: 0
   targetCanvas: {fileID: 1700106381}

@@ -75,6 +75,13 @@ public class CrashManager : MonoBehaviour
         RectTransform rt = popup.GetComponent<RectTransform>();
         rt.anchoredPosition = Vector2.zero;
         popup.SetActive(true);
+        StartCoroutine(CrashAfterTime());
+    }
+    private IEnumerator CrashAfterTime()
+    {
+        yield return new WaitForSecondsRealtime(5f);
+        Debug.Log("Game will crash in 5 seconds...");
+        GameManager.Instance.QuitGame();
 
     }
 }

@@ -15,9 +15,9 @@ MonoBehaviour:
   attackName: 
   attackType: 0
   damage: 1
-  range: 2.18
+  range: 2.3
   cooldown: 1
-  windupTime: 0.29
+  windupTime: 0.15
   attackDuration: 0.3
   attackPoints: []
   attackEffectPrefab: {fileID: 0}

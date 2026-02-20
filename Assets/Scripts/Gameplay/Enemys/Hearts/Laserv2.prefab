@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1847fe6c886dc4d478cf34a0c6131d9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletData: {fileID: 11400000, guid: f0d3d21910cec8c4c90efb56a12ef7f2, type: 2}
+  bulletData: {fileID: 11400000, guid: f4565f575d8280a43b70bf84b165169a, type: 2}
   projectileType: 1
-  laserLength: 10
+  laserLength: 4
   laserWidth: 0.3
   laserHitLayers:
     serializedVersion: 2
