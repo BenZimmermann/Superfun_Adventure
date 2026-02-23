@@ -4,6 +4,7 @@ public class CorruptionManager : MonoBehaviour
 {
     private int level;
     private float corruptionLevel;
+    private bool isfinished;
     public CorruptionState currentCorruptionState;
 
     public static CorruptionManager Instance { get; private set; }
@@ -26,7 +27,7 @@ public class CorruptionManager : MonoBehaviour
             ReadCorruption(); // <- keep corruptionLevel in sync with save data
             ReadLevel();
         }
-        Debug.LogWarning($"Corruption Level: {corruptionLevel} | Corruption State: {currentCorruptionState} | Level: {level}");
+        Debug.LogWarning($"Corruption Level: {corruptionLevel} | Corruption State: {currentCorruptionState} | Level: {level} | IsBricked: {isfinished}");
 
     }
 
@@ -49,6 +50,10 @@ public class CorruptionManager : MonoBehaviour
     private void ReadLevel()
     {
         level = GameManager.Instance.currentSaveData.level;
+    }
+    private void ReadIsFinished()
+    {
+        isfinished = GameManager.Instance.currentSaveData.isfinished;
     }
     public void SetCorruptionState()
     {

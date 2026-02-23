@@ -56,6 +56,7 @@ public class GameOverController : MonoBehaviour
     private void ShowCanvas()
     {
         GameOverCanvas.SetActive(true);
+        GameManager.Instance.PauseGame();
     }
     public void OnRestartPressed()
     {

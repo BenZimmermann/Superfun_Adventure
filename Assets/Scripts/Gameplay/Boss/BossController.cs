@@ -3,276 +3,388 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Cuphead-inspired Boss Controller for a 2D Jump & Run Shooter in Unity 6.
-/// Attach this to the Boss GameObject (centered in the room).
+/// Cuphead-inspired Boss Controller — Unity 6, 2D Jump & Run Shooter.
+///
+/// Attack Pattern System:
+///  • CodeRain, Fireballs and Spikes each have a List of AttackPatterns.
+///  • Each pattern defines WHICH spawn points fire simultaneously.
+///  • Per-phase, new patterns are unlocked and added to the pool.
+///  • One random pattern is picked each time that attack fires.
+///  • Attacks stack across phases (all previous attacks remain).
+///  • Attack interval decreases per phase.
+///  • Walls shrink exactly once (Phase 3).
 /// </summary>
 public class BossController : MonoBehaviour, IDamageable
 {
-    // ─────────────────────────────────────────────
-    //  Inspector References
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  INSPECTOR
+    // ═════════════════════════════════════════════
 
     [Header("=== Health & Phases ===")]
     [SerializeField] private int maxHealth = 400;
-    [SerializeField] private float[] phaseThresholds = { 0.75f, 0.50f, 0.25f }; // 75 %, 50 %, 25 %
+    [SerializeField] private float[] phaseThresholds = { 0.75f, 0.50f, 0.25f };
 
-    [Header("=== Boss Arms (removed per phase) ===")]
-    [Tooltip("4 arm GameObjects — removed one per phase transition (index 0 = first removed).")]
+    [Header("=== Boss Arms ===")]
+    [Tooltip("4 arms removed one-per-phase (index 0 = first removed).")]
     [SerializeField] private List<GameObject> bossArms = new List<GameObject>();
 
-    [Header("=== Projectile Prefabs ===")]
+    // ─── Prefabs ──────────────────────────────────
+    [Header("=== Prefabs ===")]
     [SerializeField] private GameObject codeRainProjectilePrefab;
     [SerializeField] private GameObject fireballProjectilePrefab;
     [SerializeField] private GameObject laserPrefab;
     [SerializeField] private GameObject spikePrefab;
     [SerializeField] private GameObject enemyPrefab;
 
-    [Header("=== Spawn Points ===")]
-    [SerializeField] private Transform[] codeRainSpawnPoints;   // top of screen
-    [SerializeField] private Transform[] fireballSpawnPoints;   // sides of screen
-    [SerializeField] private Transform[] enemySpawnPoints;      // fixed positions on ground
-    [SerializeField] private Transform[] spikeSpawnPoints;      // ground positions
+    // ─────────────────────────────────────────────────────────────────
+    //  CODE RAIN PATTERNS
+    //  Each pattern = a named set of spawn points that fire together.
+    //  Add patterns freely. Per-phase patterns are unlocked progressively.
+    //
+    //  Example setup:
+    //    Phase1CodeRainPatterns[0] = "Narrow"   → 2 center points
+    //    Phase1CodeRainPatterns[1] = "Wide"      → 5 spread points
+    //    Phase2CodeRainPatterns[0] = "Dense"     → 7 points, short delay
+    //    etc.
+    // ─────────────────────────────────────────────────────────────────
+    [Header("=== Code Rain Patterns ===")]
+    [Tooltip("Global default bursts (can be overridden per pattern).")]
+    [SerializeField] private int codeRainDefaultBursts = 5;
+    [SerializeField] private float codeRainDefaultBurstDelay = 0.25f;
 
+    [Tooltip("Patterns available from Phase 1.")]
+    [SerializeField] private List<AttackPattern> codeRainPatternsPhase1 = new List<AttackPattern>();
+    [Tooltip("Additional patterns unlocked in Phase 2.")]
+    [SerializeField] private List<AttackPattern> codeRainPatternsPhase2 = new List<AttackPattern>();
+    [Tooltip("Additional patterns unlocked in Phase 3.")]
+    [SerializeField] private List<AttackPattern> codeRainPatternsPhase3 = new List<AttackPattern>();
+    [Tooltip("Additional patterns unlocked in Phase 4.")]
+    [SerializeField] private List<AttackPattern> codeRainPatternsPhase4 = new List<AttackPattern>();
+
+    // ─────────────────────────────────────────────────────────────────
+    //  FIREBALL PATTERNS
+    // ─────────────────────────────────────────────────────────────────
+    [Header("=== Fireball Patterns ===")]
+    [Tooltip("Patterns available from Phase 1 (e.g. left+right, single side).")]
+    [SerializeField] private List<AttackPattern> fireballPatternsPhase1 = new List<AttackPattern>();
+    [Tooltip("Additional patterns unlocked in Phase 2.")]
+    [SerializeField] private List<AttackPattern> fireballPatternsPhase2 = new List<AttackPattern>();
+    [Tooltip("Additional patterns unlocked in Phase 3.")]
+    [SerializeField] private List<AttackPattern> fireballPatternsPhase3 = new List<AttackPattern>();
+    [Tooltip("Additional patterns unlocked in Phase 4.")]
+    [SerializeField] private List<AttackPattern> fireballPatternsPhase4 = new List<AttackPattern>();
+
+    // ─────────────────────────────────────────────────────────────────
+    //  SPIKE PATTERNS
+    // ─────────────────────────────────────────────────────────────────
+    [Header("=== Spike Patterns ===")]
+    [SerializeField] private float spikeDuration = 3f;
+
+    [Tooltip("Patterns available from Phase 3.")]
+    [SerializeField] private List<AttackPattern> spikePatternsPhase3 = new List<AttackPattern>();
+    [Tooltip("Additional patterns unlocked in Phase 4.")]
+    [SerializeField] private List<AttackPattern> spikePatternsPhase4 = new List<AttackPattern>();
+
+    // ─── Laser ────────────────────────────────────
     [Header("=== Laser ===")]
-    [SerializeField] private Transform laserOrigin;             // center of boss
-    [SerializeField] private float laserDuration = 2f;
+    [SerializeField] private Transform laserOrigin;
+    [SerializeField] private float laserDuration = 2.5f;
 
-    [Header("=== Boss Movement (foreground / background dodge) ===")]
-    [SerializeField] private float dodgeDistance = 3f;          // how far boss moves on Z-axis (sprite sort)
-    [SerializeField] private float dodgeDuration = 0.4f;
-    [SerializeField] private float dodgeInterval = 6f;          // seconds between dodges
-    [SerializeField] private SpriteRenderer bossSpriteRenderer;
-
-    [Header("=== Room Environment ===")]
-    [SerializeField] private BossEnvironment bossEnvironment;   // separate component
-
+    // ─── Enemies ──────────────────────────────────
     [Header("=== Enemy Spawning ===")]
     [SerializeField] private EnemySpawnController enemySpawnController;
+    [SerializeField] private Transform[] enemySpawnPoints;
+
+    // ─── Random Object Spawner ────────────────────
+    [Header("=== Random Object Spawner ===")]
+    [Tooltip("A random prefab from this list spawns at a random position within spawnRadius.")]
+    [SerializeField] private List<GameObject> randomSpawnObjects = new List<GameObject>();
+    [SerializeField] private Transform randomSpawnCenter;
+    [SerializeField] private float randomSpawnRadius = 5f;
+    [SerializeField] private float randomSpawnFrequency = 4f;
+    [Tooltip("spawnFrequency multiplied by this per phase (e.g. 0.8 = 20% faster).")]
+    [SerializeField] private float randomSpawnPhaseMultiplier = 0.8f;
+    [SerializeField] private bool randomSpawnerActive = false;
+
+    // ─── Attack Timing ────────────────────────────
+    [Header("=== Attack Timing ===")]
+    [Tooltip("Seconds between attacks in Phase 1.")]
+    [SerializeField] private float baseAttackInterval = 3.5f;
+    [Tooltip("Multiplied per phase (e.g. 0.75 = 25% faster each phase).")]
+    [SerializeField] private float attackIntervalPhaseMultiplier = 0.75f;
+    [SerializeField] private float minAttackInterval = 0.8f;
+
+    // ─── Boss Dodge ───────────────────────────────
+    [Header("=== Boss Dodge ===")]
+    [SerializeField] private float dodgeDuration = 0.4f;
+    [SerializeField] private float dodgeInterval = 6f;
+    [SerializeField] private SpriteRenderer bossSpriteRenderer;
+
+    // ─── Environment & UI ─────────────────────────
+    [Header("=== Room Environment ===")]
+    [SerializeField] private BossEnvironment bossEnvironment;
 
     [Header("=== UI ===")]
     [SerializeField] private BossHealthBar bossHealthBar;
 
-    [Header("=== Attack Timings ===")]
-    [SerializeField] private float attackInterval = 3f;
+    [Header("=== Bug Effects ===")]
+    [Tooltip("Assign the BossBugEffectController component on this same GameObject.")]
+    [SerializeField] private BossBugEffectController bugEffectController;
 
-    // ─────────────────────────────────────────────
-    //  Private State
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  PRIVATE STATE
+    // ═════════════════════════════════════════════
 
     private int currentHealth;
-    private int currentPhase = 0; // 0 = phase 1, goes up to 3
+    private int currentPhase = 0;
     private bool isTransitioning = false;
     private bool isDodging = false;
-    private bool isAttacking = false;
+    private bool wallsAlreadyShrunk = false;
+
+    private float currentAttackInterval;
+    private float currentSpawnFrequency;
 
     private Coroutine attackLoopCoroutine;
     private Coroutine dodgeLoopCoroutine;
+    private Coroutine randomSpawnCoroutine;
 
-    // ─────────────────────────────────────────────
-    //  Unity Lifecycle
-    // ─────────────────────────────────────────────
+    /// <summary>
+    /// When true the boss idles silently — no attacks, no dodge, invulnerable.
+    /// Set to false by calling Activate() (done by BossRoomTrigger).
+    /// </summary>
+    private bool isDormant = true;
+
+    // ═════════════════════════════════════════════
+    //  UNITY LIFECYCLE
+    // ═════════════════════════════════════════════
 
     private void Start()
     {
         currentHealth = maxHealth;
+        currentAttackInterval = baseAttackInterval;
+        currentSpawnFrequency = randomSpawnFrequency;
+
         bossHealthBar?.Initialize(maxHealth);
         bossEnvironment?.SetPhase(1);
 
+        // Boss waits for Activate() — loops start paused via isDormant check
         attackLoopCoroutine = StartCoroutine(AttackLoop());
         dodgeLoopCoroutine = StartCoroutine(DodgeLoop());
+
+        if (randomSpawnerActive)
+            randomSpawnCoroutine = StartCoroutine(RandomSpawnLoop());
     }
 
-    // ─────────────────────────────────────────────
-    //  Damage & Phase Transitions
-    // ─────────────────────────────────────────────
-
-    // ─────────────────────────────────────────────
-    //  IDamageable — Damage & Phase Transitions
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  ACTIVATION — called by BossRoomTrigger
+    // ═════════════════════════════════════════════
 
     /// <summary>
-    /// Called by player bullets hitting the boss.
-    /// Only DamageSource.Player should actually damage the boss;
-    /// other sources are ignored to prevent self-damage edge cases.
+    /// Called by BossRoomTrigger after the UI has faded in.
+    /// Releases the boss from its dormant state so it starts attacking.
     /// </summary>
+    public void Activate()
+    {
+        if (!isDormant) return;
+        isDormant = false;
+        Debug.Log("[Boss] Activated — starting attacks.");
+    }
+
+    // ═════════════════════════════════════════════
+    //  IDAMAGEABLE
+    // ═════════════════════════════════════════════
+
     public void TakeDamage(int amount, DamageSource source)
     {
-        // Boss can only be hurt by the player
+        if (isDormant) return;
         if (source != DamageSource.Player) return;
         if (IsInvulnerable()) return;
 
-        currentHealth -= amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth - amount, 0, maxHealth);
         bossHealthBar?.UpdateHealth(currentHealth);
 
-        CheckPhaseTransition();
+        // Reset player psychosis on every hit — same as killing any enemy
+        GameObject playerGO = GameObject.FindGameObjectWithTag("Player");
+        playerGO?.GetComponent<PlayerMovement>()?.OnEnemyKilled();
 
+        CheckPhaseTransition();
         if (currentHealth <= 0) Die();
     }
+
+    // ═════════════════════════════════════════════
+    //  PHASE TRANSITIONS
+    // ═════════════════════════════════════════════
 
     private void CheckPhaseTransition()
     {
         float ratio = (float)currentHealth / maxHealth;
-
-        // Phase thresholds: index 0 triggers phase 2, 1 → phase 3, 2 → phase 4
         if (currentPhase < phaseThresholds.Length && ratio <= phaseThresholds[currentPhase])
-        {
-            StartCoroutine(TransitionToPhase(currentPhase + 2)); // +2 because phase is 1-based
-        }
+            StartCoroutine(TransitionToPhase(currentPhase + 2));
     }
 
     private IEnumerator TransitionToPhase(int newPhase)
     {
         isTransitioning = true;
-
-        // Stop current attack loop
         if (attackLoopCoroutine != null) StopCoroutine(attackLoopCoroutine);
 
-        // Play transition animation / flash
         yield return StartCoroutine(PlayTransitionEffect());
 
-        // Remove arm (arms list index matches phase - 1, i.e. phase 2 removes arm[0])
-        int armIndex = newPhase - 2;
-        RemoveArm(armIndex);
+        RemoveArm(newPhase - 2);
+        currentPhase = newPhase - 1; // store 0-based
 
-        // Change environment
-        currentPhase = newPhase - 1; // internal 0-based index
+        // Scale timings
+        currentAttackInterval = Mathf.Max(
+            minAttackInterval,
+            baseAttackInterval * Mathf.Pow(attackIntervalPhaseMultiplier, currentPhase));
+
+        currentSpawnFrequency = randomSpawnFrequency
+            * Mathf.Pow(randomSpawnPhaseMultiplier, currentPhase);
+
         bossEnvironment?.SetPhase(newPhase);
+        bugEffectController?.OnPhaseChanged(newPhase);
 
-        Debug.Log($"[Boss] Transitioned to Phase {newPhase}");
+        // Walls shrink exactly once at Phase 3
+        if (newPhase == 3 && !wallsAlreadyShrunk)
+        {
+            bossEnvironment?.ShrinkWalls();
+            wallsAlreadyShrunk = true;
+        }
+
+        // Activate random spawner from Phase 3 onward
+        if (currentPhase >= 2 && !randomSpawnerActive)
+        {
+            randomSpawnerActive = true;
+            randomSpawnCoroutine = StartCoroutine(RandomSpawnLoop());
+        }
+
+        Debug.Log($"[Boss] → Phase {newPhase} | interval={currentAttackInterval:F2}s");
 
         isTransitioning = false;
-
-        // Restart attack loop with new phase
         attackLoopCoroutine = StartCoroutine(AttackLoop());
     }
 
-    // ─────────────────────────────────────────────
-    //  Arm Management
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  ARM MANAGEMENT
+    // ═════════════════════════════════════════════
 
-    /// <summary>Removes the arm at the given index (0–3).</summary>
     private void RemoveArm(int index)
     {
-        if (index < 0 || index >= bossArms.Count) return;
-        if (bossArms[index] == null) return;
-
-        // Play a little pop / destroy effect here if desired
+        if (index < 0 || index >= bossArms.Count || bossArms[index] == null) return;
         Destroy(bossArms[index]);
         bossArms[index] = null;
-        Debug.Log($"[Boss] Arm {index} destroyed.");
+        Debug.Log($"[Boss] Arm {index} removed.");
     }
 
-    // ─────────────────────────────────────────────
-    //  Attack Loop (phase-aware)
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  ATTACK LOOP  (cumulative pool per phase)
+    // ═════════════════════════════════════════════
 
     private IEnumerator AttackLoop()
     {
+        // Wait until Activate() is called
+        yield return new WaitUntil(() => !isDormant);
+
         while (true)
         {
-            yield return new WaitForSeconds(attackInterval);
+            yield return new WaitForSeconds(currentAttackInterval);
             if (isTransitioning || isDodging) continue;
-
-            yield return StartCoroutine(ExecutePhaseAttack());
+            yield return StartCoroutine(PickAndExecuteAttack());
         }
     }
 
-    private IEnumerator ExecutePhaseAttack()
+    private IEnumerator PickAndExecuteAttack()
     {
-        isAttacking = true;
+        var pool = new List<System.Func<IEnumerator>>();
 
-        switch (currentPhase)
-        {
-            case 0: yield return StartCoroutine(Phase1Attack()); break;
-            case 1: yield return StartCoroutine(Phase2Attack()); break;
-            case 2: yield return StartCoroutine(Phase3Attack()); break;
-            case 3: yield return StartCoroutine(Phase4Attack()); break;
-        }
+        // Phase 1 always available
+        pool.Add(AttackCodeRain);
+        pool.Add(AttackFireballs);
 
-        isAttacking = false;
+        if (currentPhase >= 1) pool.Add(AttackLaser);
+        if (currentPhase >= 2) pool.Add(AttackSpikes);
+        if (currentPhase >= 3) pool.Add(AttackSpawnEnemies);
+
+        yield return StartCoroutine(pool[Random.Range(0, pool.Count)]());
     }
 
-    // ─────────────────────────────────────────────
-    //  Phase Attacks
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  PATTERN HELPERS
+    // ═════════════════════════════════════════════
 
-    /// Phase 1 — Code Rain + Fireballs
-    private IEnumerator Phase1Attack()
+    /// Builds the cumulative pattern pool up to the current phase.
+    private List<AttackPattern> GetPatternPool(
+        List<AttackPattern> p1,
+        List<AttackPattern> p2,
+        List<AttackPattern> p3,
+        List<AttackPattern> p4)
     {
-        int choice = Random.Range(0, 2);
-        if (choice == 0)
-            yield return StartCoroutine(AttackCodeRain());
-        else
-            yield return StartCoroutine(AttackFireballs());
+        var pool = new List<AttackPattern>(p1);
+        if (currentPhase >= 1) pool.AddRange(p2);
+        if (currentPhase >= 2) pool.AddRange(p3);
+        if (currentPhase >= 3) pool.AddRange(p4);
+        return pool;
     }
 
-    /// Phase 2 — Code Rain + Laser
-    private IEnumerator Phase2Attack()
+    /// Picks a random pattern from the pool. Returns null if pool is empty.
+    private AttackPattern PickPattern(List<AttackPattern> pool)
     {
-        int choice = Random.Range(0, 2);
-        if (choice == 0)
-            yield return StartCoroutine(AttackCodeRain());
-        else
-            yield return StartCoroutine(AttackLaser());
+        if (pool == null || pool.Count == 0) return null;
+        return pool[Random.Range(0, pool.Count)];
     }
 
-    /// Phase 3 — Spikes + Smaller Room Walls
-    private IEnumerator Phase3Attack()
-    {
-        int choice = Random.Range(0, 2);
-        if (choice == 0)
-            yield return StartCoroutine(AttackSpikes());
-        else
-        {
-            bossEnvironment?.ShrinkWalls();
-            yield return new WaitForSeconds(1f);
-        }
-    }
+    // ═════════════════════════════════════════════
+    //  ATTACK MODULES
+    // ═════════════════════════════════════════════
 
-    /// Phase 4 — Spikes + Enemy Spawns
-    private IEnumerator Phase4Attack()
-    {
-        int choice = Random.Range(0, 2);
-        if (choice == 0)
-            yield return StartCoroutine(AttackSpikes());
-        else
-            yield return StartCoroutine(AttackSpawnEnemies());
-    }
-
-    // ─────────────────────────────────────────────
-    //  Individual Attack Modules
-    // ─────────────────────────────────────────────
-
-    /// Spawns projectiles from the top (code rain effect)
+    /// Code Rain — picks a random pattern, fires all its points simultaneously,
+    /// repeats for burst count, then waits burst delay between each burst.
     private IEnumerator AttackCodeRain()
     {
-        Debug.Log("[Boss] Attack: Code Rain");
-        int bursts = 5;
+        var pool = GetPatternPool(codeRainPatternsPhase1, codeRainPatternsPhase2,
+                                     codeRainPatternsPhase3, codeRainPatternsPhase4);
+        var pattern = PickPattern(pool);
+
+        if (pattern == null || codeRainProjectilePrefab == null)
+        { yield return new WaitForSeconds(1f); yield break; }
+
+        int bursts = pattern.burstCountOverride > 0
+            ? pattern.burstCountOverride : codeRainDefaultBursts;
+        float delay = pattern.burstDelayOverride > 0f
+            ? pattern.burstDelayOverride : codeRainDefaultBurstDelay;
+
+        Debug.Log($"[Boss] Code Rain: '{pattern.patternName}' ({pattern.spawnPoints.Count} points, {bursts} bursts)");
+
         for (int i = 0; i < bursts; i++)
         {
-            foreach (var spawnPoint in codeRainSpawnPoints)
-            {
-                if (codeRainProjectilePrefab != null)
-                    Instantiate(codeRainProjectilePrefab, spawnPoint.position, Quaternion.identity);
-            }
-            yield return new WaitForSeconds(0.3f);
+            // All spawn points in the pattern fire at the same time
+            foreach (var sp in pattern.spawnPoints)
+                if (sp != null)
+                    Instantiate(codeRainProjectilePrefab, sp.position, Quaternion.identity);
+
+            yield return new WaitForSeconds(delay);
         }
     }
 
-    /// Shoots fireballs from the sides
+    /// Fireballs — picks a random pattern, fires all points simultaneously.
     private IEnumerator AttackFireballs()
     {
-        Debug.Log("[Boss] Attack: Fireballs");
-        foreach (var spawnPoint in fireballSpawnPoints)
-        {
-            if (fireballProjectilePrefab != null)
-                Instantiate(fireballProjectilePrefab, spawnPoint.position, Quaternion.identity);
-        }
+        var pool = GetPatternPool(fireballPatternsPhase1, fireballPatternsPhase2,
+                                     fireballPatternsPhase3, fireballPatternsPhase4);
+        var pattern = PickPattern(pool);
+
+        if (pattern == null || fireballProjectilePrefab == null)
+        { yield return new WaitForSeconds(1f); yield break; }
+
+        Debug.Log($"[Boss] Fireballs: '{pattern.patternName}' ({pattern.spawnPoints.Count} points)");
+
+        foreach (var sp in pattern.spawnPoints)
+            if (sp != null)
+                Instantiate(fireballProjectilePrefab, sp.position, Quaternion.identity);
+
         yield return new WaitForSeconds(1f);
     }
 
-    /// Fires a laser from the boss center
+    /// Laser — spawned at laserOrigin, auto-tracks via LaserBeam script.
     private IEnumerator AttackLaser()
     {
         Debug.Log("[Boss] Attack: Laser");
@@ -284,47 +396,80 @@ public class BossController : MonoBehaviour, IDamageable
             Destroy(laser);
         }
         else
-        {
             yield return new WaitForSeconds(laserDuration);
-        }
     }
 
-    /// Spawns spikes on the ground
+    /// Spikes — picks a random pattern, all points rise simultaneously,
+    /// then despawn after spikeDuration.
     private IEnumerator AttackSpikes()
     {
-        Debug.Log("[Boss] Attack: Spikes");
-        List<GameObject> spawnedSpikes = new List<GameObject>();
-        foreach (var spawnPoint in spikeSpawnPoints)
-        {
-            if (spikePrefab != null)
-                spawnedSpikes.Add(Instantiate(spikePrefab, spawnPoint.position, Quaternion.identity));
-        }
-        yield return new WaitForSeconds(3f);
-        foreach (var spike in spawnedSpikes) if (spike != null) Destroy(spike);
+        var pool = GetPatternPool(new List<AttackPattern>(), new List<AttackPattern>(),
+                                     spikePatternsPhase3, spikePatternsPhase4);
+        var pattern = PickPattern(pool);
+
+        if (pattern == null || spikePrefab == null)
+        { yield return new WaitForSeconds(spikeDuration); yield break; }
+
+        Debug.Log($"[Boss] Spikes: '{pattern.patternName}' ({pattern.spawnPoints.Count} points)");
+
+        var spawned = new List<GameObject>();
+        foreach (var sp in pattern.spawnPoints)
+            if (sp != null)
+                spawned.Add(Instantiate(spikePrefab, sp.position, Quaternion.identity));
+
+        yield return new WaitForSeconds(spikeDuration);
+
+        foreach (var s in spawned) if (s != null) Destroy(s);
     }
 
-    /// Spawns enemies at fixed positions — max 2 at a time enforced by EnemySpawnController
+    /// Enemies — respects EnemySpawnController cap (max 2).
     private IEnumerator AttackSpawnEnemies()
     {
         Debug.Log("[Boss] Attack: Spawn Enemies");
-        foreach (var spawnPoint in enemySpawnPoints)
+        foreach (var sp in enemySpawnPoints)
         {
             if (enemyPrefab == null) continue;
-
             if (enemySpawnController != null)
-                enemySpawnController.TrySpawnEnemy(enemyPrefab, spawnPoint.position);
+                enemySpawnController.TrySpawnEnemy(enemyPrefab, sp.position);
             else
-                Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity); // fallback
+                Instantiate(enemyPrefab, sp.position, Quaternion.identity);
         }
         yield return new WaitForSeconds(2f);
     }
 
-    // ─────────────────────────────────────────────
-    //  Boss Dodge — foreground / background movement
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  RANDOM OBJECT SPAWNER
+    // ═════════════════════════════════════════════
+
+    private IEnumerator RandomSpawnLoop()
+    {
+        yield return new WaitUntil(() => !isDormant);
+
+        while (true)
+        {
+            yield return new WaitForSeconds(currentSpawnFrequency);
+            if (isTransitioning || randomSpawnObjects.Count == 0) continue;
+
+            GameObject prefab = randomSpawnObjects[Random.Range(0, randomSpawnObjects.Count)];
+            if (prefab == null) continue;
+
+            Vector3 center = randomSpawnCenter != null ? randomSpawnCenter.position : transform.position;
+            Vector2 offset = Random.insideUnitCircle * randomSpawnRadius;
+            Vector3 spawnPos = center + new Vector3(offset.x, offset.y, 0f);
+
+            Instantiate(prefab, spawnPos, Quaternion.identity);
+            Debug.Log($"[RandomSpawner] '{prefab.name}' at {spawnPos}");
+        }
+    }
+
+    // ═════════════════════════════════════════════
+    //  BOSS DODGE
+    // ═════════════════════════════════════════════
 
     private IEnumerator DodgeLoop()
     {
+        yield return new WaitUntil(() => !isDormant);
+
         while (true)
         {
             yield return new WaitForSeconds(dodgeInterval);
@@ -333,87 +478,82 @@ public class BossController : MonoBehaviour, IDamageable
         }
     }
 
-    /// Moves boss "into background" (scale/alpha change to simulate depth),
-    /// making him temporarily invulnerable.
     private IEnumerator DodgeForegroundBackground()
     {
         isDodging = true;
-        Debug.Log("[Boss] Dodge: stepping into background.");
-
-        // Simulate going into background — scale down & reduce alpha
         yield return StartCoroutine(ScaleBoss(0.75f, dodgeDuration));
         SetBossInvulnerable(true);
-
         yield return new WaitForSeconds(dodgeDuration + 0.5f);
-
-        // Return to foreground
         SetBossInvulnerable(false);
         yield return StartCoroutine(ScaleBoss(1f, dodgeDuration));
-        Debug.Log("[Boss] Dodge: back in foreground.");
-
         isDodging = false;
+
+        // Fire a random bug effect as the boss returns — feels reactive and chaotic
+        bugEffectController?.TriggerRandomBugEffect();
     }
 
     private IEnumerator ScaleBoss(float targetScale, float duration)
     {
-        Vector3 startScale = transform.localScale;
-        Vector3 endScale = new Vector3(
-            Mathf.Sign(startScale.x) * targetScale,
-            targetScale,
-            targetScale);
-
-        float elapsed = 0f;
-        while (elapsed < duration)
+        Vector3 start = transform.localScale;
+        Vector3 end = new Vector3(Mathf.Sign(start.x) * targetScale, targetScale, targetScale);
+        for (float t = 0f; t < duration; t += Time.deltaTime)
         {
-            transform.localScale = Vector3.Lerp(startScale, endScale, elapsed / duration);
-            elapsed += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(start, end, t / duration);
             yield return null;
         }
-        transform.localScale = endScale;
-
-        // Also adjust sprite alpha for the "depth" effect
+        transform.localScale = end;
         if (bossSpriteRenderer != null)
         {
             Color c = bossSpriteRenderer.color;
-            c.a = (targetScale < 1f) ? 0.4f : 1f;
+            c.a = targetScale < 1f ? 0.4f : 1f;
             bossSpriteRenderer.color = c;
         }
     }
 
-    // ─────────────────────────────────────────────
-    //  Invulnerability
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  INVULNERABILITY
+    // ═════════════════════════════════════════════
 
     private bool isInvulnerable = false;
-
-    private void SetBossInvulnerable(bool value)
-    {
-        isInvulnerable = value;
-    }
-
+    private void SetBossInvulnerable(bool v) => isInvulnerable = v;
     public bool IsInvulnerable() => isInvulnerable || isTransitioning;
 
-    // ─────────────────────────────────────────────
-    //  Transition Effect
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  TRANSITION EFFECT HOOK
+    // ═════════════════════════════════════════════
 
     private IEnumerator PlayTransitionEffect()
     {
-        // TODO: trigger animation, screen flash, sound — hook in here
-        Debug.Log("[Boss] Playing phase transition effect...");
+        Debug.Log("[Boss] Phase transition...");
         yield return new WaitForSeconds(1.5f);
     }
 
-    // ─────────────────────────────────────────────
-    //  Death
-    // ─────────────────────────────────────────────
+    // ═════════════════════════════════════════════
+    //  DEATH
+    // ═════════════════════════════════════════════
 
     private void Die()
     {
-        Debug.Log("[Boss] Boss defeated!");
+        Debug.Log("[Boss] Defeated!");
         StopAllCoroutines();
         bossEnvironment?.OnBossDefeated();
-        // TODO: play death animation, trigger level clear, etc.
+
+        // Reset player psychosis — same as killing any enemy
+        GameObject playerGO = GameObject.FindGameObjectWithTag("Player");
+        playerGO?.GetComponent<PlayerMovement>()?.OnEnemyKilled();
+
+        // Mark level as finished
+        if (SaveManager.Instance != null)
+        {
+            SaveData saveData = new SaveData();
+            saveData.isfinished = true;
+            SaveManager.Instance.SaveGame(saveData);
+            Debug.Log("[Boss] Defeated — isFinished saved.");
+        }
+
         gameObject.SetActive(false);
+        GameManager.Instance.PauseGame();
+        GameStateManager.Instance.SetState(GameState.LevelEnd);
+
     }
 }

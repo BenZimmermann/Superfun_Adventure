@@ -140,7 +140,7 @@ MonoBehaviour:
   currentHealth: 0
   currentPsychosis: 0
   maxPsychosis: 100
-  psychosisIncreasePerSecond: 1
+  psychosisIncreasePerSecond: 5
   psychosisKillReduction: 25
   psychosisSafetyMargin: 15
 --- !u!114 &9121278617445877809
