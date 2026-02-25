@@ -481,11 +481,11 @@ public class BossController : MonoBehaviour, IDamageable
     private IEnumerator DodgeForegroundBackground()
     {
         isDodging = true;
-        yield return StartCoroutine(ScaleBoss(0.75f, dodgeDuration));
+        yield return StartCoroutine(ScaleBoss(1.5f, dodgeDuration));
         SetBossInvulnerable(true);
         yield return new WaitForSeconds(dodgeDuration + 0.5f);
         SetBossInvulnerable(false);
-        yield return StartCoroutine(ScaleBoss(1f, dodgeDuration));
+        yield return StartCoroutine(ScaleBoss(2f, dodgeDuration));
         isDodging = false;
 
         // Fire a random bug effect as the boss returns — feels reactive and chaotic

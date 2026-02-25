@@ -243,7 +243,7 @@ public class BugManager : MonoBehaviour
 
         if (addCorruption && CorruptionManager.Instance != null)
         {
-            CorruptionManager.Instance.AddCorruption(corruptionAmount);
+           // CorruptionManager.Instance.AddCorruption(corruptionAmount);
             if (showDebugLogs)
                 Debug.Log($"[BugMaker] Added {corruptionAmount} corruption");
         }

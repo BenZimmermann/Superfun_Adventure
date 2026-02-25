@@ -3,8 +3,8 @@ using UnityEngine;
 public class CorruptionManager : MonoBehaviour
 {
     private int level;
-    private float corruptionLevel;
-    private bool isfinished;
+    public float corruptionLevel;
+    public bool isfinished;
     public CorruptionState currentCorruptionState;
 
     public static CorruptionManager Instance { get; private set; }
@@ -26,21 +26,14 @@ public class CorruptionManager : MonoBehaviour
            
             ReadCorruption(); // <- keep corruptionLevel in sync with save data
             ReadLevel();
+            ReadIsFinished();
         }
         Debug.LogWarning($"Corruption Level: {corruptionLevel} | Corruption State: {currentCorruptionState} | Level: {level} | IsBricked: {isfinished}");
 
     }
 
-    public void AddCorruption(float amount)
-    {
-        corruptionLevel += amount;
-        GameManager.Instance.currentSaveData.distortionLevel = corruptionLevel;
-        SetCorruptionState(); // <- optional: keep state in sync when corruption changes
-    }
-
     private void ReadCorruption()
     {
-        corruptionLevel = GameManager.Instance.currentSaveData.distortionLevel;
         SetCorruptionState(); // <- optional: keep state in sync when reading corruption
     }
     public float GetCorruptionLevel()
@@ -49,7 +42,7 @@ public class CorruptionManager : MonoBehaviour
     }
     private void ReadLevel()
     {
-        level = GameManager.Instance.currentSaveData.level;
+        level = GameManager.Instance.currentSaveData.currentLevel;
     }
     private void ReadIsFinished()
     {
@@ -58,14 +51,10 @@ public class CorruptionManager : MonoBehaviour
     public void SetCorruptionState()
     {
         // switch can't evaluate variable conditions, use if/else if instead
-        if (corruptionLevel < 25f)
-            currentCorruptionState = CorruptionState.Low;
-        else if (corruptionLevel < 50f)
+            if (level == 1)
             currentCorruptionState = CorruptionState.Medium;
-        else if (corruptionLevel < 75f)
+        else if (level == 2)
             currentCorruptionState = CorruptionState.High;
-        else if (corruptionLevel < 90f)
-            currentCorruptionState = CorruptionState.Critical;
         else
             currentCorruptionState = CorruptionState.None;
     }

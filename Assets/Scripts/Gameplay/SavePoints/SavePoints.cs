@@ -57,7 +57,7 @@ public class SavePoints : MonoBehaviour
 
             SaveCanvas.SetActive(false);
             hasSaved = false;
-            CorruptionManager.Instance.AddCorruption(10f); // Füge 10 Einheiten Korruption hinzu, wenn der Spieler den Checkpoint verlässt
+            //CorruptionManager.Instance.AddCorruption(10f); // Füge 10 Einheiten Korruption hinzu, wenn der Spieler den Checkpoint verlässt
         }
     }
 

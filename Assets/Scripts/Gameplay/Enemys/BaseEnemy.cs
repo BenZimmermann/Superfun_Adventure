@@ -21,6 +21,8 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     [Header("Attack Points")]
     [SerializeField] private Transform[] attackPoints;
 
+    [Header("Life Drop")]
+    [SerializeField][Range(0f, 1f)] private float lifeDropChance = 0.2f; // 20% Chance
     #endregion
 
     #region Private Fields
@@ -678,7 +680,16 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         StateMachine?.ChangeState(DieState);
         OnDeath?.Invoke();
 
-        if (player != null) player.OnEnemyKilled();
+        if (player != null)
+        {
+            player.OnEnemyKilled();
+
+            // Leben wiedergeben wenn Spieler nicht voll und Würfel trifft
+            if (player.CurrentHealth < player.MaxHealth && UnityEngine.Random.value < lifeDropChance)
+            {
+                player.GainLife();
+            }
+        }
     }
 
     #endregion

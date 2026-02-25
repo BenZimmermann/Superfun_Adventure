@@ -214,6 +214,15 @@ public class PlayerMovement : MonoBehaviour, IDamageable
            GameStateManager.Instance.SetState(GameState.GameOver);
 
     }
+    // In der #region health, z.B. nach TakeDamage()
+
+    public void GainLife()
+    {
+        if (currentHealth >= maxHealth) return; // kein Leben über das Maximum
+
+        currentHealth++;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
     #endregion
 
     #region Movement

@@ -29,11 +29,6 @@ public class MainMenuHandler : MonoBehaviour
     private void OnSaveDataLoaded()
     {
         CorruptionManager.Instance.SetCorruptionState();
-
-        if (CorruptionManager.Instance.currentCorruptionState == CorruptionState.Low)
-        {
-            Debug.LogWarning("Corruption State: Low");
-        }
     }
     public void OnContinuePressed()
     {
