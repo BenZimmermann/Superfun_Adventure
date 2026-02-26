@@ -1,5 +1,5 @@
 using UnityEngine;
-using Unity.UI;
+using UnityEngine.UI;
 public class PauseHandler : MonoBehaviour
 {
     [SerializeField] private GameObject PauseCanvas;
@@ -12,6 +12,7 @@ public class PauseHandler : MonoBehaviour
         {
             TogglePause();
         }
+        Debug.LogError($"timescale{Time.timeScale}");
     }
     private void TogglePause()
     {

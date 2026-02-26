@@ -17,7 +17,7 @@ MonoBehaviour:
   GroundDeceleration: 12.7
   AirAcceleration: 8.2
   AirDeceleration: 8.5
-  MaxRunSpeed: 15
+  MaxRunSpeed: 8
   GroundLayer:
     serializedVersion: 2
     m_Bits: 64

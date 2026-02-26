@@ -54,18 +54,27 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     private bool isRespawning;
     private bool isDead;
 
+    // Oben in der Klasse, neue Felder:
+    private Animator _animator;
+    private static readonly int AnimWalk = Animator.StringToHash("Walk");
+    private static readonly int AnimIdle = Animator.StringToHash("Idle");
+    private static readonly int AnimShoot = Animator.StringToHash("Shoot");
+
+    private float _shootAnimTimer = 0f;
+    private const float ShootAnimDuration = 0.2f; // wie lange "Shoot" sichtbar bleibt
+
     private void Start()
     {
-        GameManager.Instance.RegisterPlayer(this);
+       // GameManager.Instance.RegisterPlayer(this);
         OnPsychosisChanged?.Invoke(currentPsychosis, maxPsychosis);
 
-        GameManager.Instance.RegisterPlayer(this);
+        //GameManager.Instance.RegisterPlayer(this);
     }
     private void Awake()
     {
         _isFacingRight = true;
         _rb = GetComponent<Rigidbody2D>();
-
+        _animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -73,6 +82,7 @@ public class PlayerMovement : MonoBehaviour, IDamageable
         CountTimer();
         JumpChecks();
         UpdatePsychosis();
+        UpdateAnimations();
     }
 
     private void FixedUpdate()
@@ -89,6 +99,35 @@ public class PlayerMovement : MonoBehaviour, IDamageable
             Move(MoveStats.AirAcceleration, MoveStats.AirDeceleration, InputController.Movement);
         }
     }
+    #region Animation
+    private void UpdateAnimations()
+    {
+        if (_animator == null) return;
+
+        if (_shootAnimTimer > 0f)
+        {
+            _shootAnimTimer -= Time.deltaTime;
+            // Shoot an, alle anderen aus
+            _animator.SetBool(AnimShoot, true);
+            _animator.SetBool(AnimWalk, false);
+            _animator.SetBool(AnimIdle, false);
+            return;
+        }
+
+        bool isWalking = Mathf.Abs(_rb.linearVelocity.x) > 0.1f;
+
+        _animator.SetBool(AnimShoot, false);
+        _animator.SetBool(AnimWalk, isWalking);
+        _animator.SetBool(AnimIdle, !isWalking);
+    }
+
+    public void TriggerShootAnimation()
+    {
+        if (_animator == null) return;
+        _shootAnimTimer = ShootAnimDuration;
+    }
+
+    #endregion
     #region UI sync
 
 

@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     public void ContinueGame()
     {
         ResumeGame();
+         Debug.Log($"[GameManager] HasSave: {SaveManager.Instance.HasSave()}");
         if (!SaveManager.Instance.HasSave())
         {
             Debug.LogWarning("No Save File Found, Starting New Game Instead");
@@ -117,11 +118,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private IEnumerator ApplySaveDataAfterDelay(float delay)
     {
+        Debug.Log($"[GameManager] Coroutine gestartet, TimeScale: {Time.timeScale}");
         yield return new WaitForSeconds(delay);
+        Debug.Log($"[GameManager] Coroutine nach Delay, TimeScale: {Time.timeScale}");
         ApplySaveData();
     }
     private void ApplySaveData()
     {
+        Debug.Log($"[GameManager] ApplySaveData aufgerufen, TimeScale: {Time.timeScale}");
         if (currentSaveData == null)
         {
             Debug.LogWarning("No save data to apply!");
@@ -161,6 +165,7 @@ public class GameManager : MonoBehaviour
     }
     public void QuitGame()
     {
+        Application.Quit();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

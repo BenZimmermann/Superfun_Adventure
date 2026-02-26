@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   lifeTime: 0.5
-  fireRate: 0.5
+  fireRate: 0.75
   projectileSpeed: 20
   playerLayer:
     serializedVersion: 2
@@ -25,5 +25,5 @@ MonoBehaviour:
   floorLayer:
     serializedVersion: 2
     m_Bits: 64
-  bulletSprite: {fileID: 686468074, guid: f95665c80ec0f8648a530ed74b1ebb74, type: 3}
+  bulletSprite: {fileID: 21300000, guid: b39d2e878205f1c438c10b72ac94439c, type: 3}
   hitEffect: {fileID: 0}

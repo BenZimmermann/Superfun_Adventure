@@ -62,7 +62,6 @@ public class PlayerShoot : MonoBehaviour
             Debug.LogWarning("Schießen abgebrochen: Fehlende Referenzen im PlayerShoot Skript.");
             return;
         }
-
         // 1. MAUSPOSITION BERECHNEN
         // Wir projizieren den Mauspunkt auf die Welt-Ebene (Z-Differenz beachten)
         Vector3 mousePos = Input.mousePosition;
@@ -116,6 +115,7 @@ public class PlayerShoot : MonoBehaviour
 
         // Zerstörung nach der Zeit aus BulletData
         Destroy(projectile, bulletData.lifeTime);
+        playerMovement.TriggerShootAnimation();
     }
 
     private void OnDisable()

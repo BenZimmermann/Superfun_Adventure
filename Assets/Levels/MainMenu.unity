@@ -345,7 +345,6 @@ GameObject:
   - component: {fileID: 110566776}
   - component: {fileID: 110566775}
   - component: {fileID: 110566774}
-  - component: {fileID: 110566779}
   - component: {fileID: 110566778}
   m_Layer: 5
   m_Name: StartMenu
@@ -451,18 +450,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SettingsCanvas: {fileID: 8660868527909092452}
   settingsHandler: {fileID: 4242361509208278686}
---- !u!210 &110566779
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 110566773}
-  m_Enabled: 1
-  m_SortingLayerID: -1771226537
-  m_SortingLayer: 1
-  m_SortingOrder: -1
-  m_SortAtRoot: 0
 --- !u!1 &114358599
 GameObject:
   m_ObjectHideFlags: 0
@@ -5501,9 +5488,9 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1875194511}
   m_Enabled: 1
-  m_SortingLayerID: -1771226537
-  m_SortingLayer: 1
-  m_SortingOrder: -1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!114 &1875194514
 MonoBehaviour:
@@ -6192,7 +6179,6 @@ GameObject:
   - component: {fileID: 2125963360}
   - component: {fileID: 2125963359}
   - component: {fileID: 2125963358}
-  - component: {fileID: 2125963357}
   - component: {fileID: 2125963356}
   m_Layer: 5
   m_Name: StartMenu(high)
@@ -6215,18 +6201,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SettingsCanvas: {fileID: 8660868527909092452}
   settingsHandler: {fileID: 4242361509208278686}
---- !u!210 &2125963357
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2125963355}
-  m_Enabled: 1
-  m_SortingLayerID: -1771226537
-  m_SortingLayer: 1
-  m_SortingOrder: -1
-  m_SortAtRoot: 0
 --- !u!114 &2125963358
 MonoBehaviour:
   m_ObjectHideFlags: 0

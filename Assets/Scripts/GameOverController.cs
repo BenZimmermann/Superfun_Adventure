@@ -1,5 +1,5 @@
 using UnityEngine;
-using Unity.UI;
+using UnityEngine.UI;
 
 public class GameOverController : MonoBehaviour
 {
@@ -31,11 +31,12 @@ public class GameOverController : MonoBehaviour
                 timer = 0f;
             }
         }
-        else if (gameOver)
+        else if (gameOver && GameManager.Instance.currentSaveData.currentLevel == 0)
         {
             ShowCanvas();
+            gameOver = false; // NEU — sofort stoppen
         }
-           
+
     }
     private void HandleStateChanged(GameState oldState, GameState newState)
     {
@@ -55,13 +56,22 @@ public class GameOverController : MonoBehaviour
     }
     private void ShowCanvas()
     {
-        GameOverCanvas.SetActive(true);
-        GameManager.Instance.PauseGame();
+        if (!GameOverCanvas.activeSelf) // Schutz gegen mehrfachen Aufruf
+        {
+            GameOverCanvas.SetActive(true);
+            Time.timeScale = 0;
+            gameOver = false; // NEU — nicht mehr jeden Frame aufrufen
+        }
     }
     public void OnRestartPressed()
     {
+        //GameOverCanvas.SetActive(false);
+        //Time.timeScale = 1; // Setze TimeScale auf 1, bevor du fortfährsts
+        Debug.Log($"[GameOver] TimeScale vor Resume: {Time.timeScale}");
+        //GameManager.Instance.ResumeGame(); // timeScale = 1 ZUERST, bevor ContinueGame Coroutinen startet
+        Debug.Log($"[GameOver] TimeScale nach Resume: {Time.timeScale}");
+        GameStateManager.Instance.SetState(GameState.Playing);
         GameManager.Instance.ContinueGame();
-       
     }
     public void OnQuitPressed()
     {
